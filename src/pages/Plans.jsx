@@ -19,8 +19,9 @@ export default function Plans() {
         })
         navigation('/plans/payment', {
             replace: true,
-            state: {paymentData: response.data}
+            state: response.data
         })
+        console.log(response)
         } catch (err) {
          toast.error('Erro ao solicitar pagamento', {
             id: 'payment_error'
