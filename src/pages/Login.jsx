@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import Input from '../components/Form/Input'
+import Input from '../components/FormInput'
 import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
 
@@ -21,10 +21,9 @@ export default function Login() {
       toast.error(error.message, { id: 'login_error' })
       return
     }
-      setTimeout(() => {
-        toast.success('Login realizado com sucesso!', { id: 'login_success' })
-      }, 500)
-      navigate('/', { replace: true })
+
+    toast.success('Login realizado com sucesso!', { id: 'login_success' })
+    navigate('/', { replace: true })
   }
 
   return (

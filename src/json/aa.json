@@ -1,0 +1,46 @@
+[
+{
+    // criar
+  "id": "665f1a2b3c4d5e6f7a8b9c0d",
+  "name": "Plano Premium",
+  "priceCents": 4990
+},
+
+{
+    //criado
+    "_id": "6a02a3cc1f5b94e562eb04ed",
+    "name": "Plano Premium",
+    "description": "",
+    "priceCents": 4990,
+    "currency": "BRL",
+    "active": true,
+    "metadata": "{}",
+    "createdAt": "2026-05-12T03:51:40.655Z"
+},
+
+{
+    //pagar
+    "productId": "6a02a3cc1f5b94e562eb04ed",
+    "callbackUrl": "https://seu-site.com/webhook",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com"
+    }
+}, 
+
+{
+    //pagamento criado
+    "paymentId": "psa_0621290c66885d31cce8b85287c3c733",
+    "status": "pending",
+    "type": "one_time",
+    "amountCents": 4990,
+    "currency": "BRL",
+    "productName": "Plano Premium",
+    "environment": "sandbox",
+    "pix": {
+        "brCode": "SANDBOX_PIX_psa_0621290c66885d31cce8b85287c3c733",
+        "qrCodeImage": null
+    },
+    "expiresAt": "2026-05-12T04:28:20.624Z"
+}
+]

@@ -6,20 +6,23 @@ import { RiAccountCircleFill } from "react-icons/ri";
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
+import { useAuth } from '../context/AuthContext'
 
-export default function Aside({ profile, subscription }) {
+export default function Aside() {
+    const {
+        profile,
+        subscription
+    } = useAuth()
     const [message, setMessage] = useState('')
 
     const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) {
-        toast.error(error.message, { id: 'logout_error' })
+        toast.error(error.message)
         return
     }
-    setTimeout(() => {
-        toast.success('Logout realizado com sucesso!', { id: 'logout_success' })
-    }, 500)
-        navigate('/login')
+    toast.success('Logout realizado com sucesso!')
+    navigate('/login')
     }
 
 

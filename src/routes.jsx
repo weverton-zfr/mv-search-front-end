@@ -5,7 +5,7 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Register from "./pages/Register";
 import AppLayout from "./layouts/AppLayout";
-import Settings from "./pages/Settings";
+import Settings from "./pages/Settings/index";
 import Plans from "./pages/Plans";
 import Search from "./pages/Search";
 import Results from "./pages/Results";

@@ -1,11 +1,16 @@
 import UpgradeButton from "../components/UpgradeButton";
+import { useState } from 'react'
 
-export default function Plans(){
-//     toast.promise(promise, {
-//     loading: 'Atualizando plano...',
-//     success: 'Plano atualizado 🚀',
-//     error: 'Erro ao atualizar 😢'
-//   })
+export default function Plans() {
+
+  const handleSubscribe = async (plan, amount) => {
+  const email = localStorage.getItem('email') // ou pega do contexto
+
+  const url = await createPayment(plan, amount, email)
+
+  window.location.href = url
+}
+
     return(
         <section className="h-[100vh] flex flex-col items-center justify-center">
             <div className="w-[90%] h-[80%] bg-black/70 rounded-md border border-green-900/50 flex justify-center items-center gap-10 flex-col">
@@ -20,7 +25,9 @@ export default function Plans(){
                             <li>✅ Suporte por email</li>
                             <li>❌ Resultados limitados</li>
                         </ul>
-                        <UpgradeButton plan="basic_mensal" text="Plano Basic Mensal" />
+                        <button onClick={() => handleSubscribe('Plano Basic Mensal', 39.99)} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors cursor-pointer">
+                            Assinar Plano Basic Mensal
+                        </button>
                     </div>
                     <div className="bg-green-950/40 border-2 border-white/10 rounded-2xl p-6 text-center">
                         <h2 className="text-2xl font-bold mb-2">Plano Basic Trimensal</h2>
@@ -30,7 +37,9 @@ export default function Plans(){
                             <li>✅ Suporte prioritário</li>
                             <li>✅ Resultados ilimitados</li>
                         </ul>
-                        <UpgradeButton plan="basic_trimestral" text="Plano Basic Trimensal" />
+                        <button onClick={() => handleSubscribe('Plano Basic Trimensal', 99.99)} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors cursor-pointer">
+                            Assinar Plano Basic Trimensal
+                        </button>
                     </div>
                     <div className="bg-green-950/40 border-2 border-white/10 rounded-2xl p-6 text-center">
                         <h2 className="text-2xl font-bold mb-2">Plano Anual</h2>
@@ -40,7 +49,9 @@ export default function Plans(){
                             <li>✅ Suporte 24/7</li>
                             <li>✅ Resultados ilimitados com análises detalhadas</li>
                         </ul>
-                        <UpgradeButton plan="anual" text="Plano Anual" />
+                        <button onClick={() => handleSubscribe('Plano Anual', 199.99)} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors cursor-pointer">
+                            Assinar Plano Anual
+                        </button>
                     </div>
                     <div className="md:col-span-3 bg-green-950/40 border-2 border-white/10 rounded-2xl p-6 text-center mt-8">
                         <h2 className="text-2xl font-bold mb-4">Por que escolher nossos planos?</h2>

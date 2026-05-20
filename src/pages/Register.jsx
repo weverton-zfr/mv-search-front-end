@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router'
-import Input from '../components/Form/Input'
+import Input from '../components/FormInput'
 import { supabase } from '../lib/supabase'
 import { toast,Toaster } from 'react-hot-toast'
+import { api } from '../lib/api'
 
 export default function Register() {
   const [name, setName] = useState('')
@@ -10,31 +11,36 @@ export default function Register() {
   const [password, setPassword] = useState('')
   const [messagem, setMessagem] = useState()
   const navigate = useNavigate()
-
-  const handleRegister = async (e) => {
+  
+ const handleRegister = async (e) => {
     e.preventDefault()
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-      data: {
-      name: name
-    }} })
+    if (!name?.trim() || !email?.trim() || !password?.trim()) {
+      return toast.error(
+        'Preencha todos os campos!',
+        { id: 'register_null' }
+      )
+    }
+    try {
+      const response = await api.post('/register', {name, email, password})
+      toast.success('Registro realizado com sucesso!', {id: 'register_success'}
+      )
+      navigate('/login', {replace: true })
 
-    if (error) {
-      toast.error(error.message, { id: 'register_error' })
-      return
+    } catch (err) {
+      toast.error(
+        err.response?.data?.error ||
+        'Erro ao registrar',
+        {
+          id: 'register_error'
+        }
+      )
+
     }
-    if (data) {
-      toast.success('Registro realizado com sucesso! Verifique seu email para confirmar sua conta.', { id: 'register_success' })
-      navigate('/login', { replace: true })
-      return
-    }
-    
   }
+
   return (
      <main className="h-screen flex items-center justify-center bg-[radial-gradient(circle_at_center,#022c22,#000000)]">
-        <form onSubmit={handleRegister} class="relative w-full max-w-md p-8 rounded-2xl backdrop-blur-xl border-1 border-green-900/50 bg-[#111111de] shadow-2xl">
+        <form onSubmit={handleRegister} className="relative w-full max-w-md p-8 rounded-2xl backdrop-blur-xl border-1 border-green-900/50 bg-[#111111de] shadow-2xl">
           <div className='absolute top-8 right-8 rounded-xl border border-green-900 p-2 bg-green-800 text-white font-medium hover:shadow-[0_0_10px_#14532d] transition cursor-pointer' 
           onClick={() => navigate('/login')}>
               Voltar
@@ -50,10 +56,10 @@ export default function Register() {
             </div>
           </div>
 
-          <h2 class="text-2xl text-white font-semibold mb-2">
+          <h2 className="text-2xl text-white font-semibold mb-2">
             Bem-vindo
           </h2>
-          <p class="text-sm text-gray-400 mb-6">
+          <p className="text-sm text-gray-400 mb-6">
             Registre sua conta.
           </p>
           <Input type="text" placeholder="Seu Nome" onChange={e => setName(e.target.value)} />
@@ -61,7 +67,7 @@ export default function Register() {
           <Input type="password" placeholder="••••••••" onChange={e => setPassword(e.target.value)} />
 
           <button 
-          class="
+          className="
               w-full py-3 rounded-xl
               bg-green-800 text-white font-semibold
               hover:shadow-[0_0_10px_#14532d]

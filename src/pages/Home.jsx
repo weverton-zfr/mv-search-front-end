@@ -6,6 +6,8 @@ import { MdEmail, MdPerson  } from "react-icons/md";
 import { FaMapMarked, FaCar, FaBuilding } from "react-icons/fa";
 import toast from 'react-hot-toast'
 import Plans from "./Plans";
+import { useEffect } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function Home(){
     const navigation = useNavigate()
@@ -96,15 +98,7 @@ export default function Home(){
             inpType: "text"
         }
     ]
-
-    const checkSubscription = (plan) => {
-        if(plan === 'free') {
-            toast.error('Acesso Negado: Este recurso é exclusivo para assinantes. Por favor, faça um upgrade para acessar esta funcionalidade.',{id: 'access_denied'});
-            navigation('/plans')
-            return
-        }
-        navigation('/search')
-    }
+ 
 
     return(
         <section className='flex justify-center items-center w-full h-screen'>
@@ -115,7 +109,6 @@ export default function Home(){
                     <div 
                     className="flex items-center w-110 h-40 bg-green-950/20 border-1 border-white/10 rounded-2xl text-center p-2 cursor-pointer hover:shadow-[0_0_10px_#14532d] transition"
                     key={i}
-                    onClick={() => checkSubscription('baisic_mensal')}
                     >
                         {itens.icon}
                         <div className="flex flex-col justify-center items-center gap-2 ml-4 w-[70%]">

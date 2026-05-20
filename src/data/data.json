@@ -1,0 +1,72 @@
+[
+  {
+    "nome": "João Silva Santos",
+    "cpf": "123.456.789-00",
+    "cns": "7000000000000001",
+    "nome_pai": "Carlos Santos",
+    "nome_mae": "Maria Silva Santos",
+    "email": "joao.santos@testmail.com",
+    "cep": "16015-000",
+    "cnpj": "12.345.678/0001-90",
+    "titulo_eleitor": "000011112222",
+    "telefone": "(18) 99999-1111",
+    "vizinho": "Ana Souza",
+    "placa": "ABC-1D23"
+  },
+  {
+    "nome": "Pedro Oliveira Lima",
+    "cpf": "987.654.321-00",
+    "cns": "7000000000000002",
+    "nome_pai": "Roberto Lima",
+    "nome_mae": "Fernanda Oliveira",
+    "email": "pedro.lima@testmail.com",
+    "cep": "16018-200",
+    "cnpj": "98.765.432/0001-10",
+    "titulo_eleitor": "333344445555",
+    "telefone": "(18) 98888-2222",
+    "vizinho": "Marcos Silva",
+    "placa": "XYZ-9K88"
+  },
+  {
+    "nome": "Lucas Pereira Costa",
+    "cpf": "111.222.333-44",
+    "cns": "7000000000000003",
+    "nome_pai": "José Costa",
+    "nome_mae": "Patrícia Pereira",
+    "email": "lucas.costa@testmail.com",
+    "cep": "16012-450",
+    "cnpj": "11.222.333/0001-55",
+    "titulo_eleitor": "666677778888",
+    "telefone": "(18) 97777-3333",
+    "vizinho": "Bruno Alves",
+    "placa": "DEF-4M21"
+  },
+  {
+    "nome": "Rafael Almeida Rocha",
+    "cpf": "444.555.666-77",
+    "cns": "7000000000000004",
+    "nome_pai": "Antônio Rocha",
+    "nome_mae": "Juliana Almeida",
+    "email": "rafael.rocha@testmail.com",
+    "cep": "16010-300",
+    "cnpj": "44.555.666/0001-22",
+    "titulo_eleitor": "999900001111",
+    "telefone": "(18) 96666-4444",
+    "vizinho": "Carla Mendes",
+    "placa": "GHI-7P90"
+  },
+  {
+    "nome": "Matheus Ferreira Dias",
+    "cpf": "222.333.444-55",
+    "cns": "7000000000000005",
+    "nome_pai": "Eduardo Dias",
+    "nome_mae": "Camila Ferreira",
+    "email": "matheus.dias@testmail.com",
+    "cep": "16020-100",
+    "cnpj": "22.333.444/0001-33",
+    "titulo_eleitor": "121213131414",
+    "telefone": "(18) 95555-5555",
+    "vizinho": "Felipe Rocha",
+    "placa": "JKL-3Q67"
+  }
+]
