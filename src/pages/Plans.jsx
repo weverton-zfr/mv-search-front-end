@@ -1,15 +1,33 @@
+import { useNavigate } from "react-router";
 import UpgradeButton from "../components/UpgradeButton";
 import { useState } from 'react'
+import { api } from '../lib/api'
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function Plans() {
-
-  const handleSubscribe = async (plan, amount) => {
-  const email = localStorage.getItem('email') // ou pega do contexto
-
-  const url = await createPayment(plan, amount, email)
-
-  window.location.href = url
-}
+    const {profile} = useAuth()
+    const navigation = useNavigate()
+    const handleSubscribe = async (planID) => {
+        try {
+        const response = await api.post('/payments/create-payment', {
+            planID,
+            customer: {
+                name: profile.name,
+                email: profile.email
+            }
+        })
+        navigation('/plans/payment', {
+            replace: true,
+            state: {paymentData: response.data}
+        })
+        } catch (err) {
+         toast.error('Erro ao solicitar pagamento', {
+            id: 'payment_error'
+        })
+         console.log(err)
+        }
+    }
 
     return(
         <section className="h-[100vh] flex flex-col items-center justify-center">
@@ -25,31 +43,31 @@ export default function Plans() {
                             <li>✅ Suporte por email</li>
                             <li>❌ Resultados limitados</li>
                         </ul>
-                        <button onClick={() => handleSubscribe('Plano Basic Mensal', 39.99)} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors cursor-pointer">
+                        <button onClick={() => handleSubscribe("6a0d59a429cd04f4c3d49e5f")} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors cursor-pointer">
                             Assinar Plano Basic Mensal
                         </button>
                     </div>
                     <div className="bg-green-950/40 border-2 border-white/10 rounded-2xl p-6 text-center">
                         <h2 className="text-2xl font-bold mb-2">Plano Basic Trimensal</h2>
-                        <p className="text-green-400 mb-4">R$ 99,99/mês</p>
+                        <p className="text-green-400 mb-4">R$ 99,99</p>
                         <ul className="text-green-200 mb-6">
                             <li>✅ Acesso a pesquisas avançadas</li>
                             <li>✅ Suporte prioritário</li>
                             <li>✅ Resultados ilimitados</li>
                         </ul>
-                        <button onClick={() => handleSubscribe('Plano Basic Trimensal', 99.99)} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors cursor-pointer">
+                        <button onClick={() => handleSubscribe("6a0d59d729cd04f4c3d4a0c7")} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors cursor-pointer">
                             Assinar Plano Basic Trimensal
                         </button>
                     </div>
                     <div className="bg-green-950/40 border-2 border-white/10 rounded-2xl p-6 text-center">
                         <h2 className="text-2xl font-bold mb-2">Plano Anual</h2>
-                        <p className="text-green-400 mb-4">R$ 199,99/mês</p>
+                        <p className="text-green-400 mb-4">R$ 199,99</p>
                         <ul className="text-green-200 mb-6">
                             <li>✅ Acesso a todas as pesquisas</li>
                             <li>✅ Suporte 24/7</li>
                             <li>✅ Resultados ilimitados com análises detalhadas</li>
                         </ul>
-                        <button onClick={() => handleSubscribe('Plano Anual', 199.99)} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors cursor-pointer">
+                        <button onClick={() => handleSubscribe("6a0d59f229cd04f4c3d4a306")} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-500 transition-colors cursor-pointer">
                             Assinar Plano Anual
                         </button>
                     </div>

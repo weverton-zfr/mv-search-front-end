@@ -10,6 +10,7 @@ import Plans from "./pages/Plans";
 import Search from "./pages/Search";
 import Results from "./pages/Results";
 import { Toaster } from "react-hot-toast";
+import Payment from "./pages/Payment";
 
 export default function RoutesApp() {
   return (
@@ -27,14 +28,22 @@ export default function RoutesApp() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/*" element={<NotFound/>}/>
-        <Route element={ <ProtectedRoute> <AppLayout /> </ProtectedRoute>}>
+
+        <Route element={ 
+          <ProtectedRoute> 
+            <AppLayout /> 
+          </ProtectedRoute>
+        }>
           <Route path="/" element={<Home/>}/>
+
           <Route path="/plans" element={<Plans/>}/>
+          <Route path="/plans/payment" element={<Payment/>}/>
           <Route path="/settings" element={<Settings/>}/>
           <Route path="/search" element={<Search/>}/>
           <Route path="/results" element={<Results/>}/>
         </Route>
+
+        <Route path="/*" element={<NotFound/>}/>
       </Routes>
     </BrowserRouter>
   )
