@@ -19,7 +19,7 @@ export default function Plains() {
       <h2 className="text-xl mb-6">Plano</h2>
 
       <p className="text-gray-400 mb-2">Plano atual:</p>
-      <p className="text-emerald-400 font-semibold mb-4">{planNames[subscription?.plan]}</p>
+      <p className="text-emerald-400 font-semibold mb-4">{subscription?.plan}</p>
       {
        subscription.plan !== 'free' ? 
        <>

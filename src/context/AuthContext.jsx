@@ -16,6 +16,7 @@ export function AuthProvider({ children }) {
   const [subscription, setSubscription] = useState(null)
 
   const [loading, setLoading] = useState(true)
+  
 
   useEffect(() => {
 
@@ -29,7 +30,7 @@ export function AuthProvider({ children }) {
         }
 
         const token = session.access_token
-
+        // console.log(token)
         const { data } = await api.get(
           '/me',
           {
@@ -40,6 +41,7 @@ export function AuthProvider({ children }) {
         )
 
         setProfile(data.profile)
+        console.log(data.subscription)
         setSubscription(data.subscription)
 
       } catch (err) {
@@ -72,7 +74,13 @@ export function AuthProvider({ children }) {
 
   }, [])
 
+const fetchProfile = async () => {
 
+  const response = await api.get('/me')
+
+  setProfile(response.data.profile)
+
+}
 
 
   return (
@@ -81,6 +89,7 @@ export function AuthProvider({ children }) {
       profile,
       subscription,
       loading,
+      fetchProfile
     }}
   >
       {children}

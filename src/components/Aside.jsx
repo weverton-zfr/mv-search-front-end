@@ -34,12 +34,6 @@ export default function Aside() {
         { id: 'settings', label: 'Configurações' }
     ];
 
-    const planNames = {
-        free: 'Free',
-        basic_mensal: 'Basic Mensal',
-        basic_trimestral: 'Basic Trimestral',
-        anual: 'Plano Anual'
-    }
 
     return(
         <aside className="w-[15vw] fixed h-[100vh] bg-black/70 backdrop-blur-xl border-r border-white/5  border-r border-white/10 z-10 backdrop-blur-xl">
@@ -50,7 +44,7 @@ export default function Aside() {
                     <RiAccountCircleFill className="size-28"/>
                     <span className="px-3 py-1 bg-green-950/10 rounded-full">Olá, {profile?.name}</span>
                     <span className="px-3 py-1 bg-green-950/10 rounded-full">{profile?.email}</span>
-                    <span className="px-3 py-1 bg-green-950/10 rounded-full">Seu plano: {planNames[subscription?.plan]}</span>
+                    <span className="px-3 py-1 bg-green-950/10 rounded-full">Seu plano: {subscription?.plan}</span>
             </div>
             <nav className="mt-3 p-4 space-y-2 border-t border-white/10 z-10">
             {menuItems.map((item) => 

@@ -8,6 +8,8 @@ import toast from 'react-hot-toast'
 import Plans from "./Plans";
 import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
 export default function Home(){
     const navigation = useNavigate()
@@ -98,25 +100,68 @@ export default function Home(){
             inpType: "text"
         }
     ]
- 
-
+    const {subscription} = useAuth()
+    const [search, setSearch] = useState('')
+    const [filtered, setFiltered] = useState()
+    const searchQuery = (e) => {
+    e.preventDefault()
+    const filter = itens.filter(item =>
+    item.title.toLowerCase().includes(search.toLowerCase())
+    )
+    if (!search.trim()) {
+        setFiltered(undefined)
+        return
+    }
+    setFiltered(filter)
+    }
+    const data = filtered?.length > 0 ? filtered : itens
     return(
         <section className='flex justify-center items-center w-full h-screen'>
-           <div className="w-[90%] h-[96%] bg-black/70 rounded-md border border-green-900/50 flex  items-center gap-6 flex-col shadow-[0_0_25px_#10b98122] overflow-auto py-10">
-                 <h1 className="text-green-100 text-4xl font-black">MV SEARCH</h1>
-                <div className="flex flex-wrap gap-10 justify-center">
-                    {itens.map((itens, i) => 
-                    <div 
-                    className="flex items-center w-110 h-40 bg-green-950/20 border-1 border-white/10 rounded-2xl text-center p-2 cursor-pointer hover:shadow-[0_0_10px_#14532d] transition"
-                    key={i}
+           <div className="w-[90%] h-[96%] bg-black/70 rounded-md border border-green-900/50 flex  items-center gap-15 flex-col shadow-[0_0_25px_#10b98122] overflow-auto py-10">
+                <h1 className="text-green-100 text-4xl font-black">MV SEARCH</h1>
+                <div className="relative">
+                    <input type="text" name="search" id="search" placeholder="Pesquisar tipo de consulta..." className="w-100 h-7 bg-black/30 rounded-l-md border-2 border-green-900 p-4 focus:outline-none" onChange={(e) => setSearch(e.target.value)}/>
+                    <button 
+                    className="bg-green-950 p-1 rounded-r-md  border-2 border-green-900 left-[-3px] relative cursor-pointer"
+                    type="submit"
+                    onClick={searchQuery}
                     >
-                        {itens.icon}
-                        <div className="flex flex-col justify-center items-center gap-2 ml-4 w-[70%]">
-                            <h2 className="col-start-2 row-start-1 text-2xl font-bold">{itens.title}</h2>
-                            <p className="col-start-2 row-start-2 text-gray-400">{itens.info}</p>
-                        </div>
+                        Pesquisar
+                    </button>
                 </div>
-            )}
+                <div className="flex flex-wrap gap-10 justify-center">
+                    {
+                    filtered?.length === 0 && (
+                        <p className="text-red-400">
+                        Nenhuma consulta encontrada
+                        </p>
+                    )
+                    }
+                    {data.map((itens, i) => 
+                    subscription.plain == "free"
+                    ?
+                        <div 
+                        className="flex items-center w-110 h-40 bg-gray-600/90 border-1 border-white/10 rounded-2xl text-center p-2 cursor-not-allowed"
+                        key={i}
+                        >
+                            {itens.icon}
+                            <div className="flex flex-col justify-center items-center gap-2 ml-4 w-[70%]">
+                                <h2 className="col-start-2 row-start-1 text-2xl font-bold text-gray-500">{itens.title}</h2>
+                                <p className="col-start-2 row-start-2 text-gray-500">{itens.info}</p>
+                            </div>
+                        </div> 
+                    :
+                        <div 
+                        className="flex items-center w-110 h-40 bg-green-950/20 border-1 border-white/10 rounded-2xl text-center p-2 cursor-pointer hover:shadow-[0_0_10px_#14532d] transition"
+                        key={i}
+                        >
+                            {itens.icon}
+                            <div className="flex flex-col justify-center items-center gap-2 ml-4 w-[70%]">
+                                <h2 className="col-start-2 row-start-1 text-2xl font-bold">{itens.title}</h2>
+                                <p className="col-start-2 row-start-2 text-gray-400">{itens.info}</p>
+                            </div>
+                        </div> 
+                         )}
             </div>
            </div>
         </section>
