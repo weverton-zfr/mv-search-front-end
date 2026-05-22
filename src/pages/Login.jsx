@@ -18,7 +18,7 @@ export default function Login() {
     })
 
     if (error) {
-      toast.error(error.message, { id: 'login_error' })
+      toast.error('Erro ao logar '+ error.message, { id: 'login_error' })
       return
     }
 
@@ -31,8 +31,8 @@ export default function Login() {
             <form onSubmit={handleLogin} className="w-full max-w-md p-8 rounded-2xl backdrop-blur-xl border-1 border-green-900/50 bg-[#111111de] shadow-2xl">
 
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-green-800 text-black font-bold">
-                  MV
+                <div className="w-9 flex items-center justify-center text-black font-bold">
+                 <img src="/icon.png" alt="logo mv search" className='size-full'/>
                 </div>
 
                 <div>

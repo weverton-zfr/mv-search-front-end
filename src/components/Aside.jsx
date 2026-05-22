@@ -37,8 +37,8 @@ export default function Aside() {
 
     return(
         <aside className="w-[15vw] fixed h-[100vh] bg-black/70 backdrop-blur-xl border-r border-white/5  border-r border-white/10 z-10 backdrop-blur-xl">
-            <div className="h-20 flex justify-center items-center border-b border-b-white/10">
-                <h1 className="text-green-100 text-2xl font-black">MV SEARCH</h1>
+            <div className="flex justify-center items-center border-b border-b-white/10 mt-3 pb-4 w-[15vw]">
+                <img src="logo_dark.png" alt="" className="w-[8vw]"/>
             </div>
             <div className="flex justify-center items-center flex-col gap-2 p-4">
                     <RiAccountCircleFill className="size-28"/>

@@ -102,66 +102,89 @@ export default function Home(){
     ]
     const {subscription} = useAuth()
     const [search, setSearch] = useState('')
-    const [filtered, setFiltered] = useState()
-    const searchQuery = (e) => {
-    e.preventDefault()
-    const filter = itens.filter(item =>
-    item.title.toLowerCase().includes(search.toLowerCase())
+    const data = itens.filter(item =>
+        item.title
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .includes(
+            search
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        )
     )
-    if (!search.trim()) {
-        setFiltered(undefined)
-        return
-    }
-    setFiltered(filter)
-    }
-    const data = filtered?.length > 0 ? filtered : itens
+    
     return(
         <section className='flex justify-center items-center w-full h-screen'>
-           <div className="w-[90%] h-[96%] bg-black/70 rounded-md border border-green-900/50 flex  items-center gap-15 flex-col shadow-[0_0_25px_#10b98122] overflow-auto py-10">
-                <h1 className="text-green-100 text-4xl font-black">MV SEARCH</h1>
-                <div className="relative">
-                    <input type="text" name="search" id="search" placeholder="Pesquisar tipo de consulta..." className="w-100 h-7 bg-black/30 rounded-l-md border-2 border-green-900 p-4 focus:outline-none" onChange={(e) => setSearch(e.target.value)}/>
-                    <button 
-                    className="bg-green-950 p-1 rounded-r-md  border-2 border-green-900 left-[-3px] relative cursor-pointer"
-                    type="submit"
-                    onClick={searchQuery}
-                    >
-                        Pesquisar
-                    </button>
+           <div className="w-[90%] h-[96%] bg-black/70 rounded-md border border-green-900/50 flex  items-center flex-col shadow-[0_0_25px_#10b98122] overflow-auto py-10">
+                <div className="flex items-center gap-4 mb-6">
+                    <img src="/icon.png" alt="logo mv search" />
+                    <h1 className="text-green-100 text-4xl font-black">MV SEARCH</h1>
                 </div>
-                <div className="flex flex-wrap gap-10 justify-center">
+                <div className="relative">
+                    <input type="text" name="search" id="search" placeholder="Pesquisar tipo de consulta..." className="w-100 h-7 bg-black/30 rounded-md border-2 border-green-900 p-4 focus:outline-none" onChange={(e) => setSearch(e.target.value)}/>
+                </div>
+                <div className="flex flex-wrap gap-10 justify-center mt-15">
                     {
-                    filtered?.length === 0 && (
-                        <p className="text-red-400">
-                        Nenhuma consulta encontrada
-                        </p>
-                    )
-                    }
-                    {data.map((itens, i) => 
-                    subscription.plain == "free"
-                    ?
-                        <div 
-                        className="flex items-center w-110 h-40 bg-gray-600/90 border-1 border-white/10 rounded-2xl text-center p-2 cursor-not-allowed"
-                        key={i}
-                        >
-                            {itens.icon}
-                            <div className="flex flex-col justify-center items-center gap-2 ml-4 w-[70%]">
-                                <h2 className="col-start-2 row-start-1 text-2xl font-bold text-gray-500">{itens.title}</h2>
-                                <p className="col-start-2 row-start-2 text-gray-500">{itens.info}</p>
-                            </div>
-                        </div> 
-                    :
-                        <div 
-                        className="flex items-center w-110 h-40 bg-green-950/20 border-1 border-white/10 rounded-2xl text-center p-2 cursor-pointer hover:shadow-[0_0_10px_#14532d] transition"
-                        key={i}
-                        >
-                            {itens.icon}
-                            <div className="flex flex-col justify-center items-center gap-2 ml-4 w-[70%]">
-                                <h2 className="col-start-2 row-start-1 text-2xl font-bold">{itens.title}</h2>
-                                <p className="col-start-2 row-start-2 text-gray-400">{itens.info}</p>
-                            </div>
-                        </div> 
-                         )}
+    data.length === 0
+    ?
+    <div className="
+        flex
+        flex-col
+        items-center
+        justify-center
+        text-center
+        py-20
+        text-gray-500
+    ">
+        <h2 className="text-3xl font-bold text-green-900">
+            Nenhum resultado encontrado
+        </h2>
+
+        <p className="mt-2 text-gray-600">
+            Tente pesquisar outro tipo de consulta.
+        </p>
+    </div>
+    :
+    data.map((itens, i) => 
+        subscription.plan === "free"
+        ?
+        <div 
+        className="flex items-center w-110 h-40 bg-gray-700 border-1 border-white/10 rounded-2xl text-center p-2 cursor-not-allowed"
+        key={i}
+        >
+            {itens.icon}
+
+            <div className="flex flex-col justify-center items-center gap-2 ml-4 w-[70%]">
+                <h2 className="col-start-2 row-start-1 text-2xl font-bold text-gray-500">
+                    {itens.title}
+                </h2>
+
+                <p className="col-start-2 row-start-2 text-gray-500">
+                    {itens.info}
+                </p>
+            </div>
+        </div> 
+        :
+        <div 
+        className="flex items-center w-110 h-40 bg-green-950/20 border-1 border-white/10 rounded-2xl text-center p-2 cursor-pointer hover:shadow-[0_0_10px_#14532d] transition"
+        key={i}
+        >
+            {itens.icon}
+
+            <div className="flex flex-col justify-center items-center gap-2 ml-4 w-[70%]">
+                <h2 className="col-start-2 row-start-1 text-2xl font-bold">
+                    {itens.title}
+                </h2>
+
+                <p className="col-start-2 row-start-2 text-gray-400">
+                    {itens.info}
+                </p>
+            </div>
+        </div> 
+    )
+}
             </div>
            </div>
         </section>

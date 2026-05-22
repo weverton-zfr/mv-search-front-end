@@ -22,14 +22,13 @@ export default function Register() {
     }
     try {
       const response = await api.post('/register', {name, email, password})
-      toast.success('Registro realizado com sucesso!', {id: 'register_success'}
+      toast.success('Conta criada com sucesso! Enviamos um link de confirmação para seu email', {id: 'register_success'}
       )
       navigate('/login', {replace: true })
 
     } catch (err) {
       toast.error(
-        err.response?.data?.error ||
-        'Erro ao registrar',
+        'Erro ao registrar '+ err.response?.data?.error,
         {
           id: 'register_error'
         }
@@ -46,8 +45,8 @@ export default function Register() {
               Voltar
           </div>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-green-800 text-black font-bold">
-              MV
+            <div className="w-9 flex items-center justify-center text-black font-bold">
+              <img src="/icon.png" alt="logo mv search" className='size-full'/>
             </div>
             
             <div>
