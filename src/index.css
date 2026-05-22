@@ -1,41 +1,68 @@
 @import "tailwindcss";
 
-body, html{
+html,
+body,
+#root {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
 }
 
-body{
+body {
     margin: 0;
-    padding: 0;
-    box-sizing: border-box; 
-    background: radial-gradient(circle at top,#032920,#000000);
-    color: #fff;
+
+    font-family:
+        Inter,
+        system-ui,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #022c22,
+            #000000
+        );
+
+    color: white;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
 }
 
-section{
-    padding-left: 15vw;
+/* TEMA CLARO */
+.light body {
+    background:
+        linear-gradient(
+            135deg,
+            #dbe4ee 0%,
+            #c7d2da 100%
+        );
+
+    color: #0f172a;
 }
 
-/* global.css */
+/* RESPONSIVO */
+
+@media (max-width: 1024px) {
+    section {
+        padding-left: 1rem;
+    }
+}
+
+/* SCROLLBAR */
 ::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #111;
+    background: #111;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #22c55e; /* verde */
-  border-radius: 9999px;
+    background: #22c55e;
+    border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #16a34a;
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #22c55e #111;
+    background: #16a34a;
 }

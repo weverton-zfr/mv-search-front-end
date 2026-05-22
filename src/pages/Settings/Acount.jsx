@@ -1,18 +1,28 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import ConfigButton from "../../components/ConfigButton"
-import ConfigCard from "../../components/ConfigCard"
-import ConfigInput from "../../components/ConfigInput"
+import ConfigButton from "../../components/ConfigButton";
+import ConfigCard from "../../components/ConfigCard";
+import ConfigInput from "../../components/ConfigInput";
 
-import { api } from "../../lib/api"
-import toast from 'react-hot-toast'
-import { useAuth } from '../../context/AuthContext'
-import { useNavigate } from 'react-router'
+import { api } from "../../lib/api";
+
+import toast from 'react-hot-toast';
+
+import { useNavigate } from 'react-router';
+
+import { useTheme } from '../../context/ThemeContext';
 
 export default function Acount() {
-  const navigate = useNavigate()
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+
+  const navigate = useNavigate();
+
+  const { theme } = useTheme();
+
+  const isDark = theme === 'dark';
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
 
@@ -20,7 +30,7 @@ export default function Acount() {
 
       try {
 
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem('token');
 
         const { data } = await api.get(
           '/me',
@@ -29,46 +39,50 @@ export default function Acount() {
               Authorization: `Bearer ${token}`
             }
           }
-        )
+        );
 
-        setName(data.profile?.name || '')
-        setEmail(data.profile?.email || '')
+        setName(data.profile?.name || '');
+        setEmail(data.profile?.email || '');
 
       } catch (err) {
 
-        console.log(err)
+        console.log(err);
+
+        toast.error(
+          'Erro ao carregar perfil',
+          {
+            id: 'load_profile_error'
+          }
+        );
 
       }
 
     }
 
-    loadProfile()
+    loadProfile();
 
-  }, [])
+  }, []);
 
   async function handleSave() {
 
     try {
-      
-      const token = localStorage.getItem('token')
 
-      console.log({
-        name,
-        email
-      })
+      setLoading(true);
+
+      const token = localStorage.getItem('token');
 
       await api.put(
         '/profile',
         {
           name,
-          email 
+          email
         },
         {
           headers: {
             Authorization: `Bearer ${token}`
           }
         }
-      )
+      );
 
       toast.success(
         'Informações alteradas com sucesso!',
@@ -76,44 +90,226 @@ export default function Acount() {
           id: 'alter_success',
           duration: 2000
         }
-      )
+      );
+
       setTimeout(() => {
-       navigate(0)
-      }, 2000)
+        navigate(0);
+      }, 2000);
 
     } catch (err) {
-      toast.error('Erro: '+ err, { id: 'alter_error' })
+
+      toast.error(
+        'Erro ao atualizar perfil',
+        {
+          id: 'alter_error'
+        }
+      );
+
+    } finally {
+
+      setLoading(false);
+
     }
 
   }
 
   return (
+
     <ConfigCard>
 
-      <h2 className="text-xl mb-6">
-        Conta
-      </h2>
+      {/* HEADER */}
+      <div
+        className="
+          flex
+          flex-col
+          gap-1
+          mb-8
+        "
+      >
 
-      <ConfigInput
-        label="Nome"
-        placeholder={name}
-        value={name}
-        onChange={e => setName(e.target.value)}
+        <h2
+          className={`
+            text-2xl
+            sm:text-3xl
+            font-bold
+            transition-colors
 
-      />
+            ${
+              isDark
+                ? 'text-white'
+                : 'text-emerald-950'
+            }
+          `}
+        >
+          Conta
+        </h2>
 
-      <ConfigInput
-        label="Email"
-        type="email"
-        placeholder={email}
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
+        <p
+          className={`
+            text-sm
+            transition-colors
 
-      <ConfigButton onClick={handleSave}>
-        Salvar alterações
-      </ConfigButton>
+            ${
+              isDark
+                ? 'text-gray-400'
+                : 'text-slate-600'
+            }
+          `}
+        >
+          Gerencie suas informações pessoais.
+        </p>
+
+      </div>
+
+      {/* PROFILE CARD */}
+      <div
+        className={`
+          rounded-3xl
+          border
+          p-5
+          sm:p-6
+          mb-6
+          transition-all
+
+          ${
+            isDark
+              ? `
+                bg-white/[0.03]
+                border-white/5
+              `
+              : `
+                bg-white/65
+                border-slate-300/40
+                shadow-[0_0_18px_rgba(15,23,42,0.04)]
+              `
+          }
+        `}
+      >
+
+        <div
+          className="
+            flex
+            flex-col
+            gap-2
+          "
+        >
+
+          <h3
+            className={`
+              text-lg
+              font-bold
+              transition-colors
+
+              ${
+                isDark
+                  ? 'text-white'
+                  : 'text-emerald-950'
+              }
+            `}
+          >
+            Informações da conta
+          </h3>
+
+          <p
+            className={`
+              text-sm
+              leading-relaxed
+              transition-colors
+
+              ${
+                isDark
+                  ? 'text-gray-400'
+                  : 'text-slate-600'
+              }
+            `}
+          >
+            Atualize seus dados pessoais. As alterações são salvas automaticamente
+            após confirmação.
+          </p>
+
+        </div>
+
+      </div>
+
+      {/* INPUTS CARD */}
+      <div
+        className={`
+          rounded-3xl
+          border
+          p-5
+          sm:p-6
+          transition-all
+
+          ${
+            isDark
+              ? `
+                bg-black/40
+                border-white/10
+              `
+              : `
+                bg-white/65
+                border-slate-300/40
+                shadow-[0_0_18px_rgba(15,23,42,0.04)]
+              `
+          }
+        `}
+      >
+
+        <div
+          className="
+            flex
+            flex-col
+            gap-2
+          "
+        >
+
+          <ConfigInput
+            label="Nome"
+            placeholder="Digite seu nome"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+
+          <ConfigInput
+            label="Email"
+            type="email"
+            placeholder="Digite seu email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+
+        </div>
+
+        {/* BUTTON */}
+        <div
+          className="
+            mt-6
+            flex
+            flex-col
+            sm:flex-row
+            gap-3
+          "
+        >
+
+          <ConfigButton
+            onClick={handleSave}
+            disabled={loading}
+          >
+
+            {
+              loading
+              ? 'Salvando...'
+              : 'Salvar alterações'
+            }
+
+          </ConfigButton>
+
+        </div>
+
+      </div>
 
     </ConfigCard>
-  )
+
+  );
+
 }
