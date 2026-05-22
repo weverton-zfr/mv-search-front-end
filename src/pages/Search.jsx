@@ -1,26 +1,38 @@
 import { useState } from "react";
 import response from "../data/data.json";
+
 import { useLocation, useNavigate } from "react-router";
+
 import jsPDF from "jspdf";
+
 import toast from "react-hot-toast";
+
 import { useTheme } from "../context/ThemeContext";
+
 import { IMaskInput } from "react-imask";
 
 export default function Search() {
+
   const [search, setSearch] = useState("");
+
   const [loading, setLoading] = useState(false);
+
   const [result, setResult] = useState(null);
+
   const [error, setError] = useState("");
+
   const masks = {
     cpf: "000.000.000-00",
     telefone: "(00) 00000-0000",
     cep: "00000-000",
     cnpj: "00.000.000/0000-00",
     titulo_eleitor: "0000 0000 0000"
-  }
+  };
 
   const location = useLocation();
+
   const navigate = useNavigate();
+
   const { theme } = useTheme();
 
   const isDark = theme === "dark";
@@ -32,58 +44,95 @@ export default function Search() {
       ?.toString()
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/g, "");
 
   async function handleSearch() {
+
     if (!search.trim()) return;
 
     try {
+
       setLoading(true);
+
       setError("");
+
       setResult(null);
 
       const found = response.results.find((item) =>
-        normalize(item[type])?.includes(normalize(search))
+        normalize(item[type])?.includes(
+          normalize(search)
+        )
       );
 
       if (!found) {
+
         setError("Nenhum resultado encontrado.");
+
         return;
+
       }
 
-      const formatted = Object.entries(found).map(([key, value]) => ({
-        label: key.replaceAll("_", " ").toUpperCase(),
-        value
-      }));
+      const formatted = Object.entries(found).map(
+        ([key, value]) => ({
+          label: key
+            .replaceAll("_", " ")
+            .toUpperCase(),
 
-      setResult({ results: formatted });
+          value
+        })
+      );
+
+      setResult({
+        results: formatted
+      });
+
     } catch (err) {
+
+      console.log(err);
+
       setError("Erro ao pesquisar.");
+
     } finally {
+
       setLoading(false);
+
     }
+
   }
 
   function copyResults() {
+
     if (!result?.results) return;
 
     const text = result.results
-      .map((item) => `${item.label}: ${item.value || "Não informado"}`)
+      .map(
+        (item) =>
+          `${item.label}: ${
+            item.value || "Não informado"
+          }`
+      )
       .join("\n");
 
     navigator.clipboard.writeText(text);
 
-    toast.success("Dados copiados com sucesso!", {
-      id: "copy_results_success"
-    });
+    toast.success(
+      "Dados copiados com sucesso!",
+      {
+        id: "copy_results_success"
+      }
+    );
+
   }
 
   function downloadPDF() {
+
     if (!result?.results) return;
 
     const doc = new jsPDF();
 
     doc.setFontSize(18);
+
     doc.text("MV SEARCH", 20, 20);
 
     doc.setFontSize(12);
@@ -91,24 +140,38 @@ export default function Search() {
     let y = 40;
 
     result.results.forEach((item) => {
-      const text = `${item.label}: ${item.value || "Não informado"}`;
-      const lines = doc.splitTextToSize(text, 170);
+
+      const text = `${item.label}: ${
+        item.value || "Não informado"
+      }`;
+
+      const lines = doc.splitTextToSize(
+        text,
+        170
+      );
 
       doc.text(lines, 20, y);
 
       y += lines.length * 8 + 4;
 
       if (y > 280) {
+
         doc.addPage();
+
         y = 20;
+
       }
+
     });
 
     doc.save(`resultado-${type}.pdf`);
+
   }
 
   if (!type) {
+
     return (
+
       <section
         className={`
           min-h-[100dvh]
@@ -120,6 +183,7 @@ export default function Search() {
           transition-colors
         `}
       >
+
         <div
           className={`
             w-full
@@ -137,18 +201,29 @@ export default function Search() {
             }
           `}
         >
+
           <h1
             className={`
               text-2xl
               font-bold
 
-              ${isDark ? "text-emerald-300" : "text-emerald-800"}
+              ${
+                isDark
+                  ? "text-emerald-300"
+                  : "text-emerald-800"
+              }
             `}
           >
             Tipo de pesquisa inválido
           </h1>
 
-          <p className={isDark ? "mt-3 text-gray-400" : "mt-3 text-slate-600"}>
+          <p
+            className={
+              isDark
+                ? "mt-3 text-gray-400"
+                : "mt-3 text-slate-600"
+            }
+          >
             Volte para o início e selecione uma consulta.
           </p>
 
@@ -169,12 +244,17 @@ export default function Search() {
           >
             Voltar ao início
           </button>
+
         </div>
+
       </section>
+
     );
+
   }
 
   return (
+
     <section
       className={`
         min-h-[100dvh]
@@ -192,6 +272,7 @@ export default function Search() {
         }
       `}
     >
+
       <div
         className={`
           w-full
@@ -212,15 +293,26 @@ export default function Search() {
           }
         `}
       >
+
+        {/* HEADER */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 text-center sm:text-left">
+
           <div className="flex flex-col sm:flex-row items-center gap-3">
+
             <img
               src="/icon.png"
               alt="logo mv search"
-              className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
+              className="
+                w-14
+                h-14
+                sm:w-16
+                sm:h-16
+                object-contain
+              "
             />
 
             <div>
+
               <h1
                 className={`
                   text-2xl
@@ -228,16 +320,28 @@ export default function Search() {
                   md:text-4xl
                   font-black
 
-                  ${isDark ? "text-green-100" : "text-emerald-900"}
+                  ${
+                    isDark
+                      ? "text-green-100"
+                      : "text-emerald-900"
+                  }
                 `}
               >
                 MV SEARCH
               </h1>
 
-              <p className={isDark ? "text-sm text-gray-400" : "text-sm text-slate-600"}>
+              <p
+                className={
+                  isDark
+                    ? "text-sm text-gray-400"
+                    : "text-sm text-slate-600"
+                }
+              >
                 Consulta por {title}
               </p>
+
             </div>
+
           </div>
 
           <button
@@ -261,18 +365,32 @@ export default function Search() {
           >
             ← Voltar
           </button>
+
         </div>
 
+        {/* SEARCH */}
         <form
           onSubmit={(e) => {
+
             e.preventDefault();
+
             handleSearch();
+
           }}
           className="flex flex-col gap-4"
         >
+
           <div>
+
             <div className="flex items-center justify-between gap-3 mb-2">
-              <label className={isDark ? "text-sm text-gray-400" : "text-sm text-slate-600"}>
+
+              <label
+                className={
+                  isDark
+                    ? "text-sm text-gray-400"
+                    : "text-sm text-slate-600"
+                }
+              >
                 Digite sua pesquisa
               </label>
 
@@ -295,29 +413,66 @@ export default function Search() {
               >
                 {type}
               </span>
+
             </div>
 
-            <IMaskInput
-              mask={masks[type]}
-              value={search}
-              onAccept={(value) => setSearch(value)}
-              placeholder={`Digite ${title}...`}
-              className={`
-                w-full
-                p-3
-                sm:p-3.5
-                rounded-2xl
-                border
-                outline-none
-                transition
+            {
+              masks[type]
 
-                ${
-                  isDark
-                    ? "bg-black/70 text-white placeholder:text-gray-500 border-emerald-400/20 focus:ring-2 focus:ring-emerald-500"
-                    : "bg-white/80 text-slate-900 placeholder:text-slate-400 border-slate-300/60 focus:ring-2 focus:ring-emerald-600/40 focus:border-emerald-700"
+              ?
+
+              <IMaskInput
+                mask={masks[type]}
+                value={search}
+                onAccept={(value) =>
+                  setSearch(value)
                 }
-              `}
-            />
+                placeholder={`Digite ${title}...`}
+                className={`
+                  w-full
+                  p-3
+                  sm:p-3.5
+                  rounded-2xl
+                  border
+                  outline-none
+                  transition
+
+                  ${
+                    isDark
+                      ? "bg-black/70 text-white placeholder:text-gray-500 border-emerald-400/20 focus:ring-2 focus:ring-emerald-500"
+                      : "bg-white/80 text-slate-900 placeholder:text-slate-400 border-slate-300/60 focus:ring-2 focus:ring-emerald-600/40 focus:border-emerald-700"
+                  }
+                `}
+              />
+
+              :
+
+              <input
+                type={inpType || "text"}
+                value={search}
+                onChange={(e) =>
+                  setSearch(e.target.value)
+                }
+                placeholder={`Digite ${title}...`}
+                className={`
+                  w-full
+                  p-3
+                  sm:p-3.5
+                  rounded-2xl
+                  border
+                  outline-none
+                  transition
+
+                  ${
+                    isDark
+                      ? "bg-black/70 text-white placeholder:text-gray-500 border-emerald-400/20 focus:ring-2 focus:ring-emerald-500"
+                      : "bg-white/80 text-slate-900 placeholder:text-slate-400 border-slate-300/60 focus:ring-2 focus:ring-emerald-600/40 focus:border-emerald-700"
+                  }
+                `}
+              />
+
+            }
+
           </div>
 
           <button
@@ -339,11 +494,20 @@ export default function Search() {
               shadow-[0_0_20px_rgba(4,120,87,0.18)]
             "
           >
-            {loading ? "Pesquisando..." : "Pesquisar"}
+
+            {
+              loading
+                ? "Pesquisando..."
+                : "Pesquisar"
+            }
+
           </button>
+
         </form>
 
-        {error && (
+        {/* ERROR */}
+        {
+          error &&
           <div
             className={`
               mt-8
@@ -361,53 +525,87 @@ export default function Search() {
           >
             {error}
           </div>
-        )}
+        }
 
-        {result?.results && (
+        {/* RESULTS */}
+        {
+          result?.results &&
           <>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {result.results.map((item, index) => (
-                <div
-                  key={index}
-                  className={`
-                    rounded-2xl
-                    p-4
-                    break-words
-                    border
-                    transition
 
-                    ${
-                      isDark
-                        ? "bg-white/[0.02] border-white/5"
-                        : "bg-white/65 border-slate-300/40 shadow-[0_0_18px_rgba(15,23,42,0.04)]"
-                    }
-                  `}
-                >
-                  <p className={isDark ? "text-xs text-gray-500 uppercase mb-1 tracking-wider" : "text-xs text-slate-500 uppercase mb-1 tracking-wider"}>
-                    {item.label}
-                  </p>
+              {
+                result.results.map(
+                  (item, index) => (
 
-                  <h2
-                    className={`
-                      text-base
-                      sm:text-lg
-                      font-semibold
-                      break-all
+                    <div
+                      key={index}
+                      className={`
+                        rounded-2xl
+                        p-4
+                        break-words
+                        border
+                        transition
 
-                      ${isDark ? "text-green-100" : "text-emerald-900"}
-                    `}
-                  >
-                    {item.value || (
-                      <span className={isDark ? "text-gray-500 italic" : "text-slate-500 italic"}>
-                        Não informado
-                      </span>
-                    )}
-                  </h2>
-                </div>
-              ))}
+                        ${
+                          isDark
+                            ? "bg-white/[0.02] border-white/5"
+                            : "bg-white/65 border-slate-300/40 shadow-[0_0_18px_rgba(15,23,42,0.04)]"
+                        }
+                      `}
+                    >
+
+                      <p
+                        className={
+                          isDark
+                            ? "text-xs text-gray-500 uppercase mb-1 tracking-wider"
+                            : "text-xs text-slate-500 uppercase mb-1 tracking-wider"
+                        }
+                      >
+                        {item.label}
+                      </p>
+
+                      <h2
+                        className={`
+                          text-base
+                          sm:text-lg
+                          font-semibold
+                          break-all
+
+                          ${
+                            isDark
+                              ? "text-green-100"
+                              : "text-emerald-900"
+                          }
+                        `}
+                      >
+
+                        {
+                          item.value ||
+
+                          <span
+                            className={
+                              isDark
+                                ? "text-gray-500 italic"
+                                : "text-slate-500 italic"
+                            }
+                          >
+                            Não informado
+                          </span>
+                        }
+
+                      </h2>
+
+                    </div>
+
+                  )
+                )
+              }
+
             </div>
 
+            {/* ACTIONS */}
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
+
               <button
                 onClick={copyResults}
                 className={`
@@ -444,10 +642,15 @@ export default function Search() {
               >
                 Baixar PDF
               </button>
+
             </div>
           </>
-        )}
+        }
+
       </div>
+
     </section>
+
   );
+
 }
