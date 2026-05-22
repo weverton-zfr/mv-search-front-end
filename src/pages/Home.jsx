@@ -18,7 +18,7 @@ export default function Home(){
             icon: <PiIdentificationBadgeLight className="size-25"/>,
             title: "CPF",
             info: "Localize dados vinculados a um CPF de forma rápida e segura.",
-            type: "CPF",
+            type: "cpf",
             inpType: "number",
             plan: 'basic_mensal'
         },
@@ -26,77 +26,77 @@ export default function Home(){
             icon: <PiIdentificationBadgeLight className="size-25"/>,
             title: "Consulta por CNS",
             info: "Encontre informações associadas a um CNS de maneira eficiente e confiável.",
-            type: "CNS",
+            type: "cns",
             inpType: "number"
         },
         {
             icon: <MdPerson className="size-25"/>,
             title: "Consulta por Nome",
             info: "Acesse dados relacionados a um nome completo de forma rápida e precisa.",
-            type: "NOME",
+            type: "nome",
             inpType: "text"
         },
         {
             icon: <RiParentFill className="size-25"/>,
             title: "Nome da Mãe",
             info: "Consulte informações associadas ao nome da mãe de maneira eficiente e confiável.",
-            type: "NOME DA MAE",
+            type: "nome_mae",
             inpType: "text"
         },
         {
             icon: <RiParentFill className="size-25"/>,
             title: "Nome do Pai",
             info: "Localize informações associadas ao nome do pai de maneira eficiente e confiável.",
-            type: "NOME DO PAI",
+            type: "nome_pai",
             inpType: "text"
         },
         {
             icon: <MdEmail className="size-24"/>,
             title: "Consulta por Email",
             info: "Acesse informações vinculadas a um endereço de email de maneira ágil e segura.",
-            type: "EMAIL",
+            type: "email",
             inpType: "email"
         },
         {
             icon: <FaMapMarked className="size-25"/>,
             title: "Consulta por CEP",
             info: "Descubra dados relacionados a um CEP de forma rápida e precisa.",
-            type: "CEP",
+            type: "cep",
             inpType: "number"
         },
         {
             icon: <FaBuilding className="size-23"/>,
             title: "Consulta por CNPJ",
             info: "Acesse dados vinculados a um CNPJ de forma rápida e segura.",
-            type: "CNPJ",
+            type: "cnpj",
             inpType: "number"
         },
         {
             icon: <PiIdentificationBadgeLight className="size-25"/>,
             title: "Titulo de Eleitor",
             info: "Encontre informações associadas a um título de eleitor de maneira eficiente e confiável.",
-            type: "TITULO DE ELEITOR",
+            type: "titulo_eleitor",
             inpType: "number"
         },
         {
             icon: <BsFillTelephoneFill className="size-23"/>,
             title: "Consulta por Telefone",
             info: "Acesse informações vinculadas a um número de telefone de maneira ágil e segura.",
-            type: "TELEFONE",
+            type: "telefone",
             inpType: "number"
         },
         {
             icon: <BsHousesFill className="size-25"/>,
             title: "Consulta por Vizinhos",
             info: "Localize dados sobre pessoas que moram próximas a um endereço específico de maneira ágil e segura.",
-            type: "VIZINHO",
+            type: "vizinho",
             inpType: "text"
         },
         {
             icon: <FaCar className="size-25"/>,
             title: "Consulta por Placa",
             info: "Acesse informações vinculadas a uma placa de veículo de maneira ágil e segura.",
-            type: "PLACA",
+            type: "placa",
             inpType: "text"
         }
     ]
@@ -170,6 +170,15 @@ export default function Home(){
         <div 
         className="flex items-center w-110 h-40 bg-green-950/20 border-1 border-white/10 rounded-2xl text-center p-2 cursor-pointer hover:shadow-[0_0_10px_#14532d] transition"
         key={i}
+        onClick={() =>
+        navigation('/search', {
+            state: {
+            type: itens.type,
+            title: itens.title,
+            inpType: itens.inpType
+            }
+        })
+        }
         >
             {itens.icon}
 

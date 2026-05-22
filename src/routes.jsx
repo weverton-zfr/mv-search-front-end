@@ -8,7 +8,6 @@ import AppLayout from "./layouts/AppLayout";
 import Settings from "./pages/Settings/index";
 import Plans from "./pages/Plans";
 import Search from "./pages/Search";
-import Results from "./pages/Results";
 import { Toaster } from "react-hot-toast";
 import Payment from "./pages/Payment";
 
@@ -40,7 +39,6 @@ export default function RoutesApp() {
           <Route path="/plans/payment" element={<Payment/>}/>
           <Route path="/settings" element={<Settings/>}/>
           <Route path="/search" element={<Search/>}/>
-          <Route path="/results" element={<Results/>}/>
         </Route>
 
         <Route path="/*" element={<NotFound/>}/>
