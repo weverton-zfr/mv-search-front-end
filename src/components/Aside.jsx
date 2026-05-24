@@ -13,6 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 
 import { useState } from "react";
+import { translateSupabaseError } from "../utils/supabaseErrors";
 
 export default function Aside() {
   const { profile, subscription } = useAuth();
@@ -36,7 +37,7 @@ export default function Aside() {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      toast.error(error.message);
+      toast.error(translateSupabaseError(error))
       return;
     }
 

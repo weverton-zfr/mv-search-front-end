@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import Security from "./Security";
-import Plains from "./Plains";
+import Plans from "./Plans";
 import Acount from "./Acount";
 import Theme from "./Theme";
 
@@ -132,7 +132,7 @@ export default function Settings() {
         <div className="max-w-[1100px] mx-auto">
           {activeTab === "Conta" && <Acount />}
           {activeTab === "Segurança" && <Security />}
-          {activeTab === "Plano" && <Plains />}
+          {activeTab === "Plano" && <Plans />}
           {activeTab === "Tema" && <Theme />}
         </div>
       </main>

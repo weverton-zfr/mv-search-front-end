@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 import { api } from '../lib/api';
 
 import { useTheme } from '../context/ThemeContext';
+import { translateSupabaseError } from '../utils/supabaseErrors';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -36,7 +37,11 @@ export default function Register() {
         id: 'password_min'
       });
     }
-
+    if (password.length > 72) {
+    return toast.error('A senha não pode ter mais de 72 caracteres.', {
+      id: 'password_max'
+    });
+  }
     try {
       setLoading(true);
 
@@ -55,14 +60,21 @@ export default function Register() {
           replace: true
         });
       }, 1800);
-    } catch (err) {
-      toast.error(
-        'Erro ao registrar: ' +
-          (err.response?.data?.error || 'Erro desconhecido'),
-        {
-          id: 'register_error'
-        }
-      );
+    } catch (error) {
+    const message =
+    error.response?.data?.error ||
+    error.response?.data?.message ||
+    error.message;
+    if (
+    typeof message === 'string' &&
+    message.includes('For security purposes, you can only request this after')
+  ) {
+    return 'Por segurança, aguarde alguns segundos antes de solicitar novamente.'
+  }
+
+    toast.error(translateSupabaseError(message), {
+      id: 'register_error'
+    });
     } finally {
       setLoading(false);
     }

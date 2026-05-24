@@ -11,6 +11,7 @@ import Search from "./pages/Search";
 import { Toaster } from "react-hot-toast";
 import Payment from "./pages/Payment";
 import Checkout from "./pages/Checkout";
+import ResetPassword from "./pages/ResetPassword";
 
 export default function RoutesApp() {
   return (
@@ -40,6 +41,7 @@ export default function RoutesApp() {
           <Route path="/plans/payment" element={<Payment/>}/>
           <Route path="/plans/checkout" element={<Checkout />} />
           <Route path="/settings" element={<Settings/>}/>
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/search" element={<Search/>}/>
         </Route>
 

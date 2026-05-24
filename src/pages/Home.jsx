@@ -287,7 +287,7 @@ export default function Home() {
             </div>
           ) : (
             data.map((itens, i) => {
-              const isFree = subscription?.plan === "free";
+              const isFree = subscription?.plan === "Free";
 
               return (
                 <div

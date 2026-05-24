@@ -6,7 +6,7 @@ import ConfigCard from "../../components/ConfigCard";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 
-export default function Plains() {
+export default function Plans() {
   const navigate = useNavigate();
 
   const { subscription } = useAuth();
@@ -101,7 +101,7 @@ export default function Plains() {
                 font-medium
 
                 ${
-                  subscription?.plan === "free"
+                  subscription?.plan === "Free"
                     ? isDark
                       ? "border-slate-500/20 bg-slate-500/10 text-slate-300"
                       : "border-slate-400/30 bg-slate-200/70 text-slate-700"
@@ -111,12 +111,12 @@ export default function Plains() {
                 }
               `}
             >
-              {subscription?.plan === "free" ? "Gratuito" : "Ativo"}
+              {subscription?.plan === "Free" ? "Gratuito" : "Ativo"}
             </span>
           </div>
         </div>
 
-        {subscription?.plan !== "free" && (
+        {subscription?.plan !== "Free" && (
           <div
             className={`
               flex
@@ -161,7 +161,7 @@ export default function Plains() {
 
       <div className="mt-6 flex flex-col sm:flex-row gap-3">
         <ConfigButton onClick={() => navigate("/plans")}>
-          {subscription?.plan === "free" ? "Fazer upgrade" : "Gerenciar plano"}
+          {subscription?.plan === "Free" ? "Fazer upgrade" : "Gerenciar plano"}
         </ConfigButton>
       </div>
     </ConfigCard>
