@@ -117,7 +117,6 @@ export default function Acount() {
 
     <ConfigCard>
 
-      {/* HEADER */}
       <div
         className="
           flex
@@ -161,7 +160,6 @@ export default function Acount() {
 
       </div>
 
-      {/* PROFILE CARD */}
       <div
         className={`
           rounded-3xl
@@ -231,7 +229,6 @@ export default function Acount() {
 
       </div>
 
-      {/* INPUTS CARD */}
       <div
         className={`
           rounded-3xl
@@ -280,7 +277,6 @@ export default function Acount() {
 
         </div>
 
-        {/* BUTTON */}
         <div
           className="
             mt-6

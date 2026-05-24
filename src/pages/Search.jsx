@@ -294,7 +294,6 @@ export default function Search() {
         `}
       >
 
-        {/* HEADER */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 text-center sm:text-left">
 
           <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -368,7 +367,6 @@ export default function Search() {
 
         </div>
 
-        {/* SEARCH */}
         <form
           onSubmit={(e) => {
 
@@ -505,7 +503,6 @@ export default function Search() {
 
         </form>
 
-        {/* ERROR */}
         {
           error &&
           <div
@@ -527,7 +524,6 @@ export default function Search() {
           </div>
         }
 
-        {/* RESULTS */}
         {
           result?.results &&
           <>
@@ -603,7 +599,6 @@ export default function Search() {
 
             </div>
 
-            {/* ACTIONS */}
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
 
               <button

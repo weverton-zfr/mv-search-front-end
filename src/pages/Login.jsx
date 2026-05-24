@@ -72,7 +72,6 @@ export default function Login() {
       `}
     >
 
-      {/* GLOW */}
       <div
         className={`
           absolute
@@ -127,7 +126,6 @@ export default function Login() {
         `}
       >
 
-        {/* HEADER */}
         <div className="flex items-center gap-3 mb-8">
 
           <div
@@ -194,7 +192,6 @@ export default function Login() {
 
         </div>
 
-        {/* TITLE */}
         <div className="mb-6">
 
           <h2
@@ -231,7 +228,6 @@ export default function Login() {
 
         </div>
 
-        {/* INPUTS */}
         <div className="space-y-1">
 
           <Input
@@ -252,7 +248,6 @@ export default function Login() {
 
         </div>
 
-        {/* BUTTON */}
         <button
           type="submit"
           className="
@@ -283,7 +278,6 @@ export default function Login() {
           → Entrar
         </button>
 
-        {/* FOOTER */}
         <div
           className="
             flex

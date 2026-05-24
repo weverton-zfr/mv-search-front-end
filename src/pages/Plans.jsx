@@ -1,44 +1,24 @@
 import { useNavigate } from "react-router";
-import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
-import toast from "react-hot-toast";
 import { useTheme } from "../context/ThemeContext";
+import { useState } from "react";
 
 export default function Plans() {
-  const { profile, subscription } = useAuth();
+  const { subscription } = useAuth();
   const { theme } = useTheme();
   const navigation = useNavigate();
 
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [confirmPlan, setConfirmPlan] = useState(null);
+
   const isDark = theme === "dark";
-
-  const handleSubscribe = async (planID) => {
-    try {
-      const response = await api.post("/payments/create-payment", {
-        planID,
-        customer: {
-          name: profile.name,
-          email: profile.email
-        }
-      });
-
-      navigation("/plans/payment", {
-        replace: true,
-        state: response.data
-      });
-    } catch (err) {
-      toast.error("Erro ao solicitar pagamento", {
-        id: "payment_error"
-      });
-
-      console.log(err);
-    }
-  };
 
   const plans = [
     {
       title: "Plano Basic Mensal",
       price: "R$ 39,99",
       id: "6a0d59a429cd04f4c3d49e5f",
+      level: 1,
       benefits: [
         "✅ Acesso a pesquisas básicas",
         "✅ Suporte por email",
@@ -48,7 +28,8 @@ export default function Plans() {
     {
       title: "Plano Basic Trimensal",
       price: "R$ 99,99",
-      id: "6a0d59d729cd04f4c3d4a0c7",
+      id: "6a1286af7d9c8f18eb320a9c",
+      level: 2,
       benefits: [
         "✅ Acesso a pesquisas avançadas",
         "✅ Suporte prioritário",
@@ -58,7 +39,8 @@ export default function Plans() {
     {
       title: "Plano Anual",
       price: "R$ 199,99",
-      id: "6a0d59f229cd04f4c3d4a306",
+      id: "6a1286bb7d9c8f18eb320b67",
+      level: 3,
       benefits: [
         "✅ Acesso a todas as pesquisas",
         "✅ Suporte 24/7",
@@ -66,6 +48,43 @@ export default function Plans() {
       ]
     }
   ];
+
+  const currentPlan = plans.find((plan) => plan.title === subscription?.plan);
+  const currentLevel = currentPlan?.level || 0;
+
+  const openPaymentModal = (plan) => {
+    const hasActivePlan = currentLevel > 0;
+    const isChangingPlan = subscription?.plan !== plan.title;
+
+    if (hasActivePlan && isChangingPlan) {
+      setConfirmPlan(plan);
+      return;
+    }
+
+    setSelectedPlan(plan);
+  };
+
+  const confirmChangePlan = () => {
+    setSelectedPlan(confirmPlan);
+    setConfirmPlan(null);
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmPlan(null);
+  };
+
+  const closePaymentModal = () => {
+    setSelectedPlan(null);
+  };
+
+  const goToPayment = (method) => {
+    navigation("/plans/checkout", {
+      state: {
+        plan: selectedPlan,
+        method
+      }
+    });
+  };
 
   return (
     <section
@@ -78,7 +97,6 @@ export default function Plans() {
         py-6
         transition-colors
         duration-300
-
         ${
           isDark
             ? "bg-[radial-gradient(circle_at_top,#022c22,#000)] text-white"
@@ -97,7 +115,6 @@ export default function Plans() {
           sm:p-8
           lg:p-10
           transition-all
-
           ${
             isDark
               ? "bg-black/70 border-emerald-400/20 shadow-[0_0_25px_#10b98122]"
@@ -112,7 +129,6 @@ export default function Plans() {
               sm:text-4xl
               lg:text-5xl
               font-black
-
               ${isDark ? "text-emerald-400" : "text-emerald-900"}
             `}
           >
@@ -124,7 +140,6 @@ export default function Plans() {
               mt-3
               text-sm
               sm:text-base
-
               ${isDark ? "text-green-300/70" : "text-slate-700"}
             `}
           >
@@ -133,12 +148,13 @@ export default function Plans() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {plans.map((plan, index) => {
-            const currentPlan = subscription?.plan === plan.title;
+          {plans.map((plan) => {
+            const isCurrentPlan = subscription?.plan === plan.title;
+            const isBlocked = currentLevel >= plan.level;
 
             return (
               <div
-                key={index}
+                key={plan.id}
                 className={`
                   rounded-3xl
                   border
@@ -147,9 +163,8 @@ export default function Plans() {
                   flex-col
                   transition-all
                   duration-300
-
                   ${
-                    currentPlan
+                    isBlocked
                       ? isDark
                         ? "bg-gray-800 border-white/10 opacity-70"
                         : "bg-slate-200/70 border-slate-300/60 opacity-70"
@@ -164,9 +179,8 @@ export default function Plans() {
                     text-2xl
                     font-bold
                     mb-2
-
                     ${
-                      currentPlan
+                      isBlocked
                         ? isDark
                           ? "text-gray-500"
                           : "text-slate-500"
@@ -184,9 +198,8 @@ export default function Plans() {
                     text-lg
                     mb-6
                     font-semibold
-
                     ${
-                      currentPlan
+                      isBlocked
                         ? isDark
                           ? "text-gray-500"
                           : "text-slate-500"
@@ -205,9 +218,8 @@ export default function Plans() {
                     mb-8
                     text-sm
                     sm:text-base
-
                     ${
-                      currentPlan
+                      isBlocked
                         ? isDark
                           ? "text-gray-500"
                           : "text-slate-500"
@@ -223,8 +235,8 @@ export default function Plans() {
                 </ul>
 
                 <button
-                  disabled={currentPlan}
-                  onClick={() => handleSubscribe(plan.id)}
+                  disabled={isBlocked}
+                  onClick={() => openPaymentModal(plan)}
                   className={`
                     mt-auto
                     py-3
@@ -233,9 +245,8 @@ export default function Plans() {
                     font-semibold
                     transition-all
                     duration-200
-
                     ${
-                      currentPlan
+                      isBlocked
                         ? isDark
                           ? "bg-red-950 text-gray-400 cursor-not-allowed"
                           : "bg-slate-300 text-slate-500 cursor-not-allowed"
@@ -243,12 +254,175 @@ export default function Plans() {
                     }
                   `}
                 >
-                  {currentPlan ? "Plano Atual" : `Assinar ${plan.title}`}
+                  {isCurrentPlan
+                    ? "Plano Atual"
+                    : isBlocked
+                      ? "Plano Indisponível"
+                      : `Assinar ${plan.title}`}
                 </button>
               </div>
             );
           })}
         </div>
+
+        {confirmPlan && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+            <div
+              className={`
+                w-full
+                max-w-md
+                rounded-3xl
+                border
+                p-6
+                shadow-2xl
+                ${
+                  isDark
+                    ? "bg-zinc-950 border-white/10 text-white"
+                    : "bg-white border-slate-200 text-slate-900"
+                }
+              `}
+            >
+              <h2 className="text-2xl font-bold mb-3">
+                Confirmar troca de plano
+              </h2>
+
+              <p
+                className={`
+                  text-sm
+                  leading-relaxed
+                  mb-6
+                  ${isDark ? "text-gray-400" : "text-slate-600"}
+                `}
+              >
+                Você já possui o plano <strong>{subscription?.plan}</strong>.
+                Ao contratar o <strong>{confirmPlan.title}</strong>, o tempo
+                restante do plano atual poderá ser perdido. Deseja continuar?
+              </p>
+
+              <div className="space-y-3">
+                <button
+                  onClick={confirmChangePlan}
+                  className="
+                    w-full
+                    py-3
+                    rounded-2xl
+                    bg-red-700
+                    hover:bg-red-600
+                    text-white
+                    font-semibold
+                    transition-all
+                  "
+                >
+                  Sim, quero continuar
+                </button>
+
+                <button
+                  onClick={closeConfirmModal}
+                  className={`
+                    w-full
+                    py-3
+                    rounded-2xl
+                    font-semibold
+                    transition-all
+                    ${
+                      isDark
+                        ? "bg-white/10 hover:bg-white/15 text-gray-300"
+                        : "bg-slate-200 hover:bg-slate-300 text-slate-700"
+                    }
+                  `}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {selectedPlan && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+            <div
+              className={`
+                w-full
+                max-w-md
+                rounded-3xl
+                border
+                p-6
+                shadow-2xl
+                ${
+                  isDark
+                    ? "bg-zinc-950 border-white/10 text-white"
+                    : "bg-white border-slate-200 text-slate-900"
+                }
+              `}
+            >
+              <h2 className="text-2xl font-bold mb-2">
+                Forma de pagamento
+              </h2>
+
+              <p
+                className={`
+                  text-sm
+                  mb-6
+                  ${isDark ? "text-gray-400" : "text-slate-600"}
+                `}
+              >
+                Escolha como deseja pagar o {selectedPlan.title}.
+              </p>
+
+              <div className="space-y-3">
+                <button
+                  onClick={() => goToPayment("pix")}
+                  className="
+                    w-full
+                    py-3
+                    rounded-2xl
+                    bg-emerald-700
+                    hover:bg-emerald-600
+                    text-white
+                    font-semibold
+                    transition-all
+                  "
+                >
+                  Pagar com PIX
+                </button>
+
+                <button
+                  onClick={() => goToPayment("card")}
+                  className="
+                    w-full
+                    py-3
+                    rounded-2xl
+                    bg-blue-700
+                    hover:bg-blue-600
+                    text-white
+                    font-semibold
+                    transition-all
+                  "
+                >
+                  Pagar com Cartão
+                </button>
+
+                <button
+                  onClick={closePaymentModal}
+                  className={`
+                    w-full
+                    py-3
+                    rounded-2xl
+                    font-semibold
+                    transition-all
+                    ${
+                      isDark
+                        ? "bg-white/10 hover:bg-white/15 text-gray-300"
+                        : "bg-slate-200 hover:bg-slate-300 text-slate-700"
+                    }
+                  `}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div
           className={`
@@ -259,7 +433,6 @@ export default function Plans() {
             sm:p-8
             text-center
             transition-all
-
             ${
               isDark
                 ? "border-white/10 bg-green-950/20"
@@ -273,7 +446,6 @@ export default function Plans() {
               sm:text-3xl
               font-bold
               mb-4
-
               ${isDark ? "text-white" : "text-emerald-950"}
             `}
           >
@@ -287,7 +459,6 @@ export default function Plans() {
               text-sm
               sm:text-base
               leading-relaxed
-
               ${isDark ? "text-green-100/80" : "text-slate-700"}
             `}
           >

@@ -3,7 +3,7 @@ import { Navigate } from 'react-router'
 import { supabase } from '../lib/supabase'
 
 export default function ProtectedRoute({ children }) {
-  const [user, setUser] = useState(undefined) // undefined = carregando
+  const [user, setUser] = useState(undefined)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {

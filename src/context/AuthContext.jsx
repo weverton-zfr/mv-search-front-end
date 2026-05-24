@@ -30,7 +30,6 @@ export function AuthProvider({ children }) {
         }
 
         const token = session.access_token
-        // console.log(token)
         const { data } = await api.get(
           '/me',
           {
@@ -41,7 +40,6 @@ export function AuthProvider({ children }) {
         )
 
         setProfile(data.profile)
-        console.log(data.subscription)
         setSubscription(data.subscription)
 
       } catch (err) {

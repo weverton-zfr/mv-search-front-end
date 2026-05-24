@@ -24,6 +24,7 @@ export default function Aside() {
 
   const [activeMenu, setActiveMenu] = useState("/");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   const menuItems = [
     { id: "/", label: "Início" },
@@ -47,6 +48,8 @@ export default function Aside() {
       }
     });
 
+    setLogoutModalOpen(false);
+    setMenuOpen(false);
     navigate("/login");
   };
 
@@ -242,7 +245,7 @@ export default function Aside() {
                 : "text-red-600 hover:bg-red-100"
             }
           `}
-          onClick={handleLogout}
+          onClick={() => setLogoutModalOpen(true)}
         >
           <CiLogout className="size-5" />
           <span>Sair</span>
@@ -374,6 +377,81 @@ export default function Aside() {
       >
         {asideContent}
       </aside>
+
+      {logoutModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-4">
+          <div
+            className={`
+              w-full
+              max-w-md
+              rounded-3xl
+              border
+              p-6
+              shadow-2xl
+
+              ${
+                isDark
+                  ? "bg-zinc-950 border-white/10 text-white"
+                  : "bg-white border-slate-200 text-slate-900"
+              }
+            `}
+          >
+            <h2 className="text-2xl font-bold mb-3">
+              Deseja realmente sair?
+            </h2>
+
+            <p
+              className={`
+                text-sm
+                leading-relaxed
+                mb-6
+
+                ${isDark ? "text-gray-400" : "text-slate-600"}
+              `}
+            >
+              Você será desconectado da sua conta atual e precisará fazer login
+              novamente para acessar o sistema.
+            </p>
+
+            <div className="space-y-3">
+              <button
+                onClick={handleLogout}
+                className="
+                  w-full
+                  py-3
+                  rounded-2xl
+                  bg-red-700
+                  hover:bg-red-600
+                  text-white
+                  font-semibold
+                  transition-all
+                "
+              >
+                Sim, sair
+              </button>
+
+              <button
+                onClick={() => setLogoutModalOpen(false)}
+                className={`
+                  w-full
+                  py-3
+                  rounded-2xl
+                  font-semibold
+                  transition-all
+
+                  ${
+                    isDark
+                      ? "bg-white/10 hover:bg-white/15 text-gray-300"
+                      : "bg-slate-200 hover:bg-slate-300 text-slate-700"
+                  }
+                `}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

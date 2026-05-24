@@ -77,7 +77,6 @@ export default function Security() {
 
   return (
     <ConfigCard>
-      {/* HEADER */}
       <div className="flex flex-col gap-1 mb-8">
         <h2
           className={`
@@ -104,7 +103,6 @@ export default function Security() {
         </p>
       </div>
 
-      {/* INFO CARD */}
       <div
         className={`
           mb-6
@@ -154,7 +152,6 @@ export default function Security() {
         </p>
       </div>
 
-      {/* INPUTS */}
       <div
         className={`
           rounded-3xl
@@ -203,7 +200,6 @@ export default function Security() {
           />
         </div>
 
-        {/* BUTTON */}
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <ConfigButton onClick={handleChangePassword} disabled={loading}>
             {loading ? 'Alterando...' : 'Alterar senha'}

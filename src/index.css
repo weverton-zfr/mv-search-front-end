@@ -41,14 +41,6 @@ body {
     color: #0f172a;
 }
 
-/* RESPONSIVO */
-
-@media (max-width: 1024px) {
-    section {
-        padding-left: 1rem;
-    }
-}
-
 /* SCROLLBAR */
 ::-webkit-scrollbar {
     width: 8px;
