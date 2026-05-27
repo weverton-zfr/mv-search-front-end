@@ -17,7 +17,7 @@ export default function Plans() {
     {
       title: "Plano Basic Mensal",
       price: "R$ 39,99",
-      id: "6a1286bb7d9c8f18eb320b67",
+      id: "6a0d59a429cd04f4c3d49e5f",
       level: 1,
       benefits: [
         "✅ Acesso a pesquisas básicas",

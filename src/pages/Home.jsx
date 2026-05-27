@@ -22,7 +22,7 @@ export default function Home() {
 
   const itens = [
     {
-      icon: <PiIdentificationBadgeLight className="size-10 sm:size-12" />,
+      icon: <PiIdentificationBadgeLight className="size-7 sm:size-10 lg:size-12" />,
       title: "CPF",
       info: "Localize dados vinculados a um CPF de forma rápida e segura.",
       type: "cpf",
@@ -30,77 +30,77 @@ export default function Home() {
       plan: "basic_mensal"
     },
     {
-      icon: <PiIdentificationBadgeLight className="size-10 sm:size-12" />,
+      icon: <PiIdentificationBadgeLight className="size-7 sm:size-10 lg:size-12" />,
       title: "Consulta por CNS",
       info: "Encontre informações associadas a um CNS de maneira eficiente e confiável.",
       type: "cns",
       inpType: "number"
     },
     {
-      icon: <MdPerson className="size-10 sm:size-12" />,
+      icon: <MdPerson className="size-7 sm:size-10 lg:size-12" />,
       title: "Consulta por Nome",
       info: "Acesse dados relacionados a um nome completo de forma rápida e precisa.",
       type: "nome",
       inpType: "text"
     },
     {
-      icon: <RiParentFill className="size-10 sm:size-12" />,
+      icon: <RiParentFill className="size-7 sm:size-10 lg:size-12" />,
       title: "Nome da Mãe",
       info: "Consulte informações associadas ao nome da mãe.",
       type: "nome_mae",
       inpType: "text"
     },
     {
-      icon: <RiParentFill className="size-10 sm:size-12" />,
+      icon: <RiParentFill className="size-7 sm:size-10 lg:size-12" />,
       title: "Nome do Pai",
       info: "Localize informações associadas ao nome do pai.",
       type: "nome_pai",
       inpType: "text"
     },
     {
-      icon: <MdEmail className="size-10 sm:size-12" />,
+      icon: <MdEmail className="size-7 sm:size-10 lg:size-12" />,
       title: "Consulta por Email",
       info: "Acesse informações vinculadas a um email.",
       type: "email",
       inpType: "email"
     },
     {
-      icon: <FaMapMarked className="size-10 sm:size-12" />,
+      icon: <FaMapMarked className="size-7 sm:size-10 lg:size-12" />,
       title: "Consulta por CEP",
       info: "Descubra dados relacionados a um CEP.",
       type: "cep",
       inpType: "number"
     },
     {
-      icon: <FaBuilding className="size-10 sm:size-12" />,
+      icon: <FaBuilding className="size-7 sm:size-10 lg:size-12" />,
       title: "Consulta por CNPJ",
       info: "Acesse dados vinculados a um CNPJ.",
       type: "cnpj",
       inpType: "number"
     },
     {
-      icon: <PiIdentificationBadgeLight className="size-10 sm:size-12" />,
+      icon: <PiIdentificationBadgeLight className="size-7 sm:size-10 lg:size-12" />,
       title: "Titulo de Eleitor",
       info: "Encontre informações associadas a um título de eleitor.",
       type: "titulo_eleitor",
       inpType: "number"
     },
     {
-      icon: <BsFillTelephoneFill className="size-10 sm:size-12" />,
+      icon: <BsFillTelephoneFill className="size-7 sm:size-10 lg:size-12" />,
       title: "Consulta por Telefone",
       info: "Acesse informações vinculadas a um telefone.",
       type: "telefone",
       inpType: "number"
     },
     {
-      icon: <BsHousesFill className="size-10 sm:size-12" />,
+      icon: <BsHousesFill className="size-7 sm:size-10 lg:size-12" />,
       title: "Consulta por Vizinhos",
       info: "Localize dados sobre vizinhos próximos.",
       type: "vizinho",
       inpType: "text"
     },
     {
-      icon: <FaCar className="size-10 sm:size-12" />,
+      icon: <FaCar className="size-7 sm:size-10 lg:size-12" />,
       title: "Consulta por Placa",
       info: "Acesse informações vinculadas a uma placa.",
       type: "placa",
@@ -128,11 +128,12 @@ export default function Home() {
         flex
         justify-center
         items-center
-        px-3
-        py-4
+        px-2
+        sm:px-3
+        py-3
+        sm:py-4
         transition-colors
         duration-300
-
         ${
           isDark
             ? "bg-[radial-gradient(circle_at_top,#022c22,#000)] text-white"
@@ -145,18 +146,18 @@ export default function Home() {
           w-full
           xl:w-[90%]
           min-h-[95vh]
-          rounded-3xl
+          rounded-2xl
+          sm:rounded-3xl
           border
           flex
           flex-col
           items-center
           overflow-hidden
-          p-4
+          p-3
           sm:p-6
           lg:p-10
           backdrop-blur-xl
           transition-all
-
           ${
             isDark
               ? "bg-black/70 border-green-900/40 shadow-[0_0_25px_#10b98122]"
@@ -164,38 +165,20 @@ export default function Home() {
           }
         `}
       >
-        <div
-          className="
-            flex
-            flex-col
-            sm:flex-row
-            items-center
-            gap-4
-            mb-8
-            text-center
-            sm:text-left
-          "
-        >
+        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 mb-5 sm:mb-8 text-center sm:text-left">
           <img
             src="/icon.png"
             alt="logo mv search"
-            className="
-              w-16
-              h-16
-              sm:w-20
-              sm:h-20
-              object-contain
-            "
+            className="w-14 h-14 sm:w-20 sm:h-20 object-contain"
           />
 
           <div>
             <h1
               className={`
-                text-3xl
+                text-2xl
                 sm:text-4xl
                 lg:text-5xl
                 font-black
-
                 ${isDark ? "text-green-100" : "text-emerald-950"}
               `}
             >
@@ -204,10 +187,9 @@ export default function Home() {
 
             <p
               className={`
-                text-sm
+                text-xs
                 sm:text-base
                 mt-1
-
                 ${isDark ? "text-gray-400" : "text-slate-600"}
               `}
             >
@@ -224,13 +206,17 @@ export default function Home() {
             placeholder="Pesquisar tipo de consulta..."
             className={`
               w-full
-              h-12
-              rounded-2xl
+              h-11
+              sm:h-12
+              rounded-xl
+              sm:rounded-2xl
               border
-              px-5
+              px-4
+              sm:px-5
+              text-sm
+              sm:text-base
               outline-none
               transition-all
-
               ${
                 isDark
                   ? "bg-black/40 border-green-900 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-green-700"
@@ -241,47 +227,21 @@ export default function Home() {
           />
         </div>
 
-        <div
-          className="
-            w-full
-            grid
-            grid-cols-1
-            lg:grid-cols-2
-            gap-5
-            mt-10
-          "
-        >
+        <div className="w-full grid grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-5 mt-6 sm:mt-10">
           {data.length === 0 ? (
-            <div
-              className="
-                col-span-full
-                flex
-                flex-col
-                items-center
-                justify-center
-                text-center
-                py-20
-              "
-            >
+            <div className="col-span-full flex flex-col items-center justify-center text-center py-20">
               <h2
                 className={`
                   text-2xl
                   sm:text-3xl
                   font-bold
-
                   ${isDark ? "text-green-900" : "text-emerald-900"}
                 `}
               >
                 Nenhum resultado encontrado
               </h2>
 
-              <p
-                className={`
-                  mt-2
-
-                  ${isDark ? "text-gray-600" : "text-slate-600"}
-                `}
-              >
+              <p className={`mt-2 ${isDark ? "text-gray-600" : "text-slate-600"}`}>
                 Tente pesquisar outro tipo de consulta.
               </p>
             </div>
@@ -307,15 +267,22 @@ export default function Home() {
                     flex-col
                     sm:flex-row
                     items-center
+                    sm:items-start
+                    justify-center
+                    sm:justify-start
                     text-center
                     sm:text-left
-                    gap-4
-                    rounded-3xl
-                    p-5
+                    gap-2
+                    sm:gap-4
+                    rounded-2xl
+                    sm:rounded-3xl
+                    p-3
+                    sm:p-5
+                    min-h-[120px]
+                    sm:min-h-0
                     border
                     transition-all
                     duration-300
-
                     ${
                       isFree
                         ? isDark
@@ -330,7 +297,6 @@ export default function Home() {
                   <div
                     className={`
                       shrink-0
-
                       ${
                         isFree
                           ? isDark
@@ -345,13 +311,14 @@ export default function Home() {
                     {itens.icon}
                   </div>
 
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1 sm:gap-2 min-w-0 items-center sm:items-start text-center sm:text-left w-full">
                     <h2
                       className={`
-                        text-xl
-                        sm:text-2xl
+                        text-sm
+                        sm:text-xl
+                        lg:text-2xl
                         font-bold
-
+                        leading-tight
                         ${
                           isFree
                             ? isDark
@@ -368,10 +335,11 @@ export default function Home() {
 
                     <p
                       className={`
+                        hidden
+                        sm:block
                         text-sm
-                        sm:text-base
+                        lg:text-base
                         leading-relaxed
-
                         ${
                           isFree
                             ? isDark
