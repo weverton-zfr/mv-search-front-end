@@ -15,7 +15,7 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -47,7 +47,7 @@ export default function Register() {
       });
     }
 
-    if (!termsAccepted) {
+    if (!acceptedTerms) {
       return toast.error('Você precisa aceitar os Termos de Uso e a Política de Privacidade.', {
         id: 'terms_required'
       });
@@ -59,8 +59,7 @@ export default function Register() {
       await api.post('/register', {
         name,
         email,
-        password,
-        termsAccepted
+        password
       });
 
       toast.success('Conta criada com sucesso! Verifique seu email.', {
@@ -269,10 +268,10 @@ export default function Register() {
 
         <div className="mt-5 flex items-start gap-3">
           <input
-            id="termsAccepted"
+            id="acceptedTerms"
             type="checkbox"
-            checked={termsAccepted}
-            onChange={(e) => setTermsAccepted(e.target.checked)}
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
             className="
               mt-1
               h-4
@@ -283,7 +282,7 @@ export default function Register() {
           />
 
           <label
-            htmlFor="termsAccepted"
+            htmlFor="acceptedTerms"
             className={`
               text-xs
               sm:text-sm
@@ -483,7 +482,8 @@ export default function Register() {
 
                 <p className="mt-1">
                   Coletamos apenas os dados necessários para cadastro, autenticação, segurança, funcionamento do
-                  sistema e melhoria da experiência do usuário.
+                  sistema e melhoria da experiência do usuário. As informações serão tratadas com segurança e não
+                  deverão ser compartilhadas indevidamente.
                 </p>
               </section>
 
@@ -515,7 +515,7 @@ export default function Register() {
               <button
                 type="button"
                 onClick={() => {
-                  setTermsAccepted(true);
+                  setAcceptedTerms(true);
                   setShowTermsModal(false);
                 }}
                 className="

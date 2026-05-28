@@ -17,12 +17,12 @@ export default function Plans() {
     {
       title: "Plano Basic Mensal",
       price: "R$ 39,99",
-      id: "6a0d59a429cd04f4c3d49e5f",
+      id: "6a12868f7d9c8f18eb320995",
       level: 1,
       benefits: [
-        "✅ Acesso a pesquisas básicas",
-        "✅ Suporte por email",
-        "❌ Resultados limitados"
+        "✅ Ideal para começar",
+        "✅ Flexibilidade mensal",
+        "✅ Sem fidelidade"
       ]
     },
     {
@@ -32,8 +32,8 @@ export default function Plans() {
       level: 2,
       benefits: [
         "✅ Acesso a pesquisas avançadas",
-        "✅ Suporte prioritário",
-        "✅ Resultados ilimitados"
+        "✅ Melhor custo-benefício",
+        "✅ Economia no médio prazo"
       ]
     },
     {
@@ -42,9 +42,9 @@ export default function Plans() {
       id: "6a1286bb7d9c8f18eb320b67",
       level: 3,
       benefits: [
-        "✅ Acesso a todas as pesquisas",
-        "✅ Suporte 24/7",
-        "✅ Resultados ilimitados"
+        "✅ Melhor preço",
+        "✅ Economia máxima",
+        "✅ Acesso contínuo"
       ]
     }
   ];
@@ -148,121 +148,219 @@ export default function Plans() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {plans.map((plan) => {
-            const isCurrentPlan = subscription?.plan === plan.title;
-            const isBlocked = currentLevel >= plan.level;
+        {plans.map((plan) => {
 
-            return (
-              <div
-                key={plan.id}
+          const isCurrentPlan = subscription?.plan === plan.title;
+          const isBlocked = currentLevel >= plan.level;
+
+          const badge =
+            plan.level === 1
+              ? "Flexível"
+              : plan.level === 2
+                ? "Mais Popular"
+                : "Melhor Oferta";
+
+          const description =
+            plan.level === 1
+              ? "Ideal para começar e testar a plataforma."
+              : plan.level === 2
+                ? "O melhor equilíbrio entre custo e benefício."
+                : "Máxima economia e acesso contínuo durante todo o ano.";
+
+          const monthlyEquivalent =
+            plan.level === 2
+              ? "Equivale a R$ 33,33/mês"
+              : plan.level === 3
+                ? "Equivale a apenas R$ 16,66/mês"
+                : null;
+
+          return (
+            <div
+              key={plan.id}
+              className={`
+                rounded-3xl
+                border
+                p-6
+                flex
+                flex-col
+                transition-all
+                duration-300
+                relative
+                overflow-hidden
+
+                ${
+                  isBlocked
+                    ? isDark
+                      ? "bg-gray-800 border-white/10 opacity-70"
+                      : "bg-slate-200/70 border-slate-300/60 opacity-70"
+                    : isDark
+                      ? "bg-green-950/20 border-white/10 hover:border-green-700/40 hover:shadow-[0_0_25px_#14532d22] hover:-translate-y-1"
+                      : "bg-white/65 border-slate-300/40 shadow-[0_0_18px_rgba(15,23,42,0.04)] hover:border-emerald-700/40 hover:shadow-[0_0_25px_rgba(4,120,87,0.12)] hover:-translate-y-1"
+                }
+              `}
+            >
+
+              {!isBlocked && (
+                <div className="mb-4">
+                  <span
+                    className={`
+                      inline-flex
+                      items-center
+                      px-3
+                      py-1
+                      rounded-full
+                      text-xs
+                      font-semibold
+                      border
+
+                      ${
+                        plan.level === 1
+                          ? isDark
+                            ? "bg-white/5 border-white/10 text-gray-300"
+                            : "bg-slate-100 border-slate-200 text-slate-700"
+
+                          : plan.level === 2
+                            ? "bg-emerald-500/15 border-emerald-500/20 text-emerald-400"
+
+                            : "bg-yellow-500/15 border-yellow-500/20 text-yellow-300"
+                      }
+                    `}
+                  >
+                    {badge}
+                  </span>
+                </div>
+              )}
+
+              <h2
                 className={`
-                  rounded-3xl
-                  border
-                  p-6
-                  flex
-                  flex-col
-                  transition-all
-                  duration-300
+                  text-2xl
+                  font-bold
+                  mb-2
+
                   ${
                     isBlocked
                       ? isDark
-                        ? "bg-gray-800 border-white/10 opacity-70"
-                        : "bg-slate-200/70 border-slate-300/60 opacity-70"
+                        ? "text-gray-500"
+                        : "text-slate-500"
                       : isDark
-                        ? "bg-green-950/20 border-white/10 hover:border-green-700/40 hover:shadow-[0_0_25px_#14532d22] hover:-translate-y-1"
-                        : "bg-white/65 border-slate-300/40 shadow-[0_0_18px_rgba(15,23,42,0.04)] hover:border-emerald-700/40 hover:shadow-[0_0_25px_rgba(4,120,87,0.12)] hover:-translate-y-1"
+                        ? "text-white"
+                        : "text-emerald-950"
                   }
                 `}
               >
-                <h2
-                  className={`
-                    text-2xl
-                    font-bold
-                    mb-2
-                    ${
-                      isBlocked
-                        ? isDark
-                          ? "text-gray-500"
-                          : "text-slate-500"
-                        : isDark
-                          ? "text-white"
-                          : "text-emerald-950"
-                    }
-                  `}
-                >
-                  {plan.title}
-                </h2>
+                {plan.title}
+              </h2>
 
+              <p
+                className={`
+                  text-lg
+                  font-semibold
+
+                  ${
+                    isBlocked
+                      ? isDark
+                        ? "text-gray-500"
+                        : "text-slate-500"
+                      : isDark
+                        ? "text-green-400"
+                        : "text-emerald-800"
+                  }
+                `}
+              >
+                {plan.price}
+              </p>
+
+              {monthlyEquivalent && (
                 <p
                   className={`
-                    text-lg
-                    mb-6
-                    font-semibold
-                    ${
-                      isBlocked
-                        ? isDark
-                          ? "text-gray-500"
-                          : "text-slate-500"
-                        : isDark
-                          ? "text-green-400"
-                          : "text-emerald-800"
-                    }
-                  `}
-                >
-                  {plan.price}
-                </p>
-
-                <ul
-                  className={`
-                    space-y-3
-                    mb-8
                     text-sm
-                    sm:text-base
-                    ${
-                      isBlocked
-                        ? isDark
-                          ? "text-gray-500"
-                          : "text-slate-500"
-                        : isDark
-                          ? "text-green-100"
-                          : "text-slate-700"
-                    }
-                  `}
-                >
-                  {plan.benefits.map((benefit, i) => (
-                    <li key={i}>{benefit}</li>
-                  ))}
-                </ul>
+                    mt-1
+                    mb-3
 
-                <button
-                  disabled={isBlocked}
-                  onClick={() => openPaymentModal(plan)}
-                  className={`
-                    mt-auto
-                    py-3
-                    px-5
-                    rounded-2xl
-                    font-semibold
-                    transition-all
-                    duration-200
                     ${
-                      isBlocked
-                        ? isDark
-                          ? "bg-red-950 text-gray-400 cursor-not-allowed"
-                          : "bg-slate-300 text-slate-500 cursor-not-allowed"
-                        : "bg-emerald-700 hover:bg-emerald-600 hover:scale-[1.01] active:scale-[0.99] text-white cursor-pointer shadow-[0_0_20px_rgba(4,120,87,0.18)]"
+                      isDark
+                        ? "text-green-200/70"
+                        : "text-emerald-700"
                     }
                   `}
                 >
-                  {isCurrentPlan
-                    ? "Plano Atual"
-                    : isBlocked
-                      ? "Plano Indisponível"
-                      : `Assinar ${plan.title}`}
-                </button>
-              </div>
-            );
-          })}
+                  {monthlyEquivalent}
+                </p>
+              )}
+
+              <p
+                className={`
+                  text-sm
+                  leading-relaxed
+                  mb-6
+
+                  ${
+                    isBlocked
+                      ? isDark
+                        ? "text-gray-500"
+                        : "text-slate-500"
+                      : isDark
+                        ? "text-gray-300"
+                        : "text-slate-600"
+                  }
+                `}
+              >
+                {description}
+              </p>
+
+              <ul
+                className={`
+                  space-y-3
+                  mb-8
+                  text-sm
+                  sm:text-base
+
+                  ${
+                    isBlocked
+                      ? isDark
+                        ? "text-gray-500"
+                        : "text-slate-500"
+                      : isDark
+                        ? "text-green-100"
+                        : "text-slate-700"
+                  }
+                `}
+              >
+                {plan.benefits.map((benefit, i) => (
+                  <li key={i}>{benefit}</li>
+                ))}
+              </ul>
+
+              <button
+                disabled={isBlocked}
+                onClick={() => openPaymentModal(plan)}
+                className={`
+                  mt-auto
+                  py-3
+                  px-5
+                  rounded-2xl
+                  font-semibold
+                  transition-all
+                  duration-200
+
+                  ${
+                    isBlocked
+                      ? isDark
+                        ? "bg-red-950 text-gray-400 cursor-not-allowed"
+                        : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                      : "bg-emerald-700 hover:bg-emerald-600 hover:scale-[1.01] active:scale-[0.99] text-white cursor-pointer shadow-[0_0_20px_rgba(4,120,87,0.18)]"
+                  }
+                `}
+              >
+                {isCurrentPlan
+                  ? "Plano Atual"
+                  : isBlocked
+                    ? "Plano Indisponível"
+                    : `Assinar ${plan.title}`}
+              </button>
+            </div>
+          );
+        })}
         </div>
 
         {confirmPlan && (
