@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { useTheme } from "../context/ThemeContext";
+import ContainerDefault from "../components/ContainerDefault";
 
 export default function NotFound() {
   const { theme } = useTheme();
@@ -7,29 +8,7 @@ export default function NotFound() {
   const isDark = theme === "dark";
 
   return (
-    <section
-      className={`
-        min-h-[100dvh]
-        flex
-        flex-col
-        justify-center
-        items-center
-        text-center
-        px-4
-        py-10
-        pl-0!
-        overflow-hidden
-        relative
-        transition-colors
-        duration-300
-
-        ${
-          isDark
-            ? "bg-[radial-gradient(circle_at_top,#022c22,#000)] text-white"
-            : "bg-[linear-gradient(135deg,#dbe4ee_0%,#c7d2da_100%)] text-slate-900"
-        }
-      `}
-    >
+    <ContainerDefault>
       <div
         className={`
           absolute
@@ -148,6 +127,6 @@ export default function NotFound() {
           ← Voltar ao início
         </Link>
       </div>
-    </section>
+    </ContainerDefault>
   );
 }

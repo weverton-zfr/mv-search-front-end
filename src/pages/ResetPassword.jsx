@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
 import { useTheme } from '../context/ThemeContext';
 import { translateSupabaseError } from '../utils/supabaseErrors';
+import ContainerDefault from '../components/ContainerDefault';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -54,22 +55,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <section
-      className={`
-        min-h-[100dvh]
-        flex
-        justify-center
-        items-center
-        px-4
-        py-6
-
-        ${
-          isDark
-            ? 'bg-[radial-gradient(circle_at_top,#022c22,#000)] text-white'
-            : 'bg-[linear-gradient(135deg,#dbe4ee_0%,#c7d2da_100%)] text-slate-900'
-        }
-      `}
-    >
+    <ContainerDefault>
       <div
         className={`
           w-full
@@ -174,6 +160,6 @@ export default function ResetPassword() {
           </button>
         </div>
       </div>
-    </section>
+    </ContainerDefault>
   );
 }

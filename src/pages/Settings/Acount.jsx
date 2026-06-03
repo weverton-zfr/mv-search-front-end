@@ -25,13 +25,9 @@ export default function Acount() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-
     async function loadProfile() {
-
       try {
-
         const token = localStorage.getItem('token');
-
         const { data } = await api.get(
           '/me',
           {

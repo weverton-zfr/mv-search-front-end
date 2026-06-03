@@ -4,6 +4,7 @@ import Input from '../components/FormInput';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import { useTheme } from '../context/ThemeContext';
+import ContainerDefault from '../components/ContainerDefault';
 
 export default function Login() {
 
@@ -51,26 +52,7 @@ export default function Login() {
 
   return (
 
-    <main
-      className={`
-        min-h-[100dvh]
-        flex
-        items-center
-        justify-center
-        px-4
-        py-6
-        relative
-        overflow-hidden
-        transition-colors
-        duration-300
-
-        ${
-          isDark
-            ? 'bg-[radial-gradient(circle_at_center,#022c22,#000000)]'
-            : 'bg-[linear-gradient(135deg,#dbe4ee_0%,#c7d2da_100%)]'
-        }
-      `}
-    >
+    <ContainerDefault>
 
       <div
         className={`
@@ -325,7 +307,7 @@ export default function Login() {
 
       </form>
 
-    </main>
+    </ContainerDefault>
 
   );
 

@@ -14,31 +14,6 @@ body {
         Inter,
         system-ui,
         sans-serif;
-
-    background:
-        radial-gradient(
-            circle at top,
-            #022c22,
-            #000000
-        );
-
-    color: white;
-
-    transition:
-        background 0.3s ease,
-        color 0.3s ease;
-}
-
-/* TEMA CLARO */
-.light body {
-    background:
-        linear-gradient(
-            135deg,
-            #dbe4ee 0%,
-            #c7d2da 100%
-        );
-
-    color: #0f172a;
 }
 
 /* SCROLLBAR */

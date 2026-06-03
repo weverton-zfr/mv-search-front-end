@@ -9,6 +9,7 @@ import { api } from '../lib/api';
 
 import { useTheme } from '../context/ThemeContext';
 import { translateSupabaseError } from '../utils/supabaseErrors';
+import ContainerDefault from '../components/ContainerDefault';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -73,47 +74,23 @@ export default function Register() {
         });
       }, 1800);
     } catch (error) {
-      const message =
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        error.message;
+  console.log('ERRO COMPLETO:', error)
+  console.log('STATUS:', error.response?.status)
+  console.log('RESPOSTA DO BACKEND:', error.response?.data)
 
-      if (
-        typeof message === 'string' &&
-        message.includes('For security purposes, you can only request this after')
-      ) {
-        return toast.error('Por segurança, aguarde alguns segundos antes de solicitar novamente.', {
-          id: 'register_security_wait'
-        });
-      }
+  const message =
+    error.response?.data?.error ||
+    error.response?.data?.message ||
+    error.message
 
-      toast.error(translateSupabaseError(message), {
-        id: 'register_error'
-      });
-    } finally {
-      setLoading(false);
-    }
+  toast.error(translateSupabaseError(message), {
+    id: 'register_error'
+  })
+}
   };
 
   return (
-    <main
-      className={`
-        min-h-[100dvh]
-        flex
-        items-center
-        justify-center
-        px-4
-        py-6
-        transition-colors
-        duration-300
-
-        ${
-          isDark
-            ? 'bg-[radial-gradient(circle_at_center,#022c22,#000000)] text-white'
-            : 'bg-[linear-gradient(135deg,#dbe4ee_0%,#c7d2da_100%)] text-slate-900'
-        }
-      `}
-    >
+    <ContainerDefault>
       <form
         onSubmit={handleRegister}
         className={`
@@ -561,6 +538,6 @@ export default function Register() {
           </div>
         </div>
       )}
-    </main>
+    </ContainerDefault>
   );
 }

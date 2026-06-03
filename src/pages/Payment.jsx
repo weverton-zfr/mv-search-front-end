@@ -4,6 +4,7 @@ import { api } from "../lib/api";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import ContainerDefault from "../components/ContainerDefault";
 
 export default function Payment() {
   const navigation = useNavigate();
@@ -77,24 +78,7 @@ export default function Payment() {
   if (!state) return null;
 
   return (
-    <section
-      className={`
-        min-h-[100dvh]
-        flex
-        justify-center
-        items-center
-        px-3
-        py-6
-        transition-colors
-        duration-300
-
-        ${
-          isDark
-            ? "bg-[radial-gradient(circle_at_top,#022c22,#000)] text-white"
-            : "bg-[linear-gradient(135deg,#dbe4ee_0%,#c7d2da_100%)] text-slate-900"
-        }
-      `}
-    >
+    <ContainerDefault>
       <div
         className={`
           w-full
@@ -520,6 +504,6 @@ export default function Payment() {
           </div>
         </div>
       </div>
-    </section>
+    </ContainerDefault>
   );
 }
