@@ -83,5 +83,12 @@ export const searchItems = [
     info: "Acesse informações vinculadas a um veículo.",
     type: "veiculos",
     inpType: "text"
-  }
+  },
+  {
+  icon: "car",
+  title: "Consulta por Proprietário",
+  info: "Localize veículos e histórico vinculados a um possível proprietário.",
+  type: "proprietarios",
+  inpType: "text"
+}
 ];
