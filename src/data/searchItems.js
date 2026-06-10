@@ -72,23 +72,23 @@ export const searchItems = [
   },
   {
     icon: "neighbors",
-    title: "Consulta por Vizinhos",
-    info: "Localize dados sobre vizinhos próximos.",
+    title: "Vizinhos por CPF",
+    info: "Localize endereços e possíveis vizinhos vinculados a um CPF.",
     type: "vizinhos",
-    inpType: "text"
+    inpType: "number"
   },
   {
     icon: "car",
-    title: "Consulta por Veículos",
-    info: "Acesse informações vinculadas a um veículo.",
+    title: "Veículos por CPF",
+    info: "Consulte veículos vinculados a um CPF de forma rápida e segura.",
     type: "veiculos",
-    inpType: "text"
+    inpType: "number"
   },
   {
-  icon: "car",
-  title: "Consulta por Proprietário",
-  info: "Localize veículos e histórico vinculados a um possível proprietário.",
-  type: "proprietarios",
-  inpType: "text"
-}
+    icon: "car",
+    title: "Proprietários por CPF",
+    info: "Localize possíveis proprietários e veículos associados a um CPF.",
+    type: "proprietarios",
+    inpType: "number"
+  }
 ];

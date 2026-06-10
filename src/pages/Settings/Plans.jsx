@@ -14,13 +14,6 @@ export default function Plans() {
 
   const isDark = theme === "dark";
 
-  const planNames = {
-    free: "Free",
-    basic_mensal: "Basic Mensal",
-    basic_trimestral: "Basic Trimestral",
-    anual: "Plano Anual"
-  };
-
   return (
     <ConfigCard>
       <div className="flex flex-col gap-1 mb-8">
@@ -88,7 +81,7 @@ export default function Plans() {
                 ${isDark ? "text-emerald-400" : "text-emerald-900"}
               `}
             >
-              {planNames[subscription?.plan] || subscription?.plan || "Free"}
+              {subscription?.plan || "Plano Gratuito"}
             </h3>
 
             <span
@@ -101,7 +94,7 @@ export default function Plans() {
                 font-medium
 
                 ${
-                  subscription?.plan === "Free"
+                  subscription?.plan === "Plano Gratuito"
                     ? isDark
                       ? "border-slate-500/20 bg-slate-500/10 text-slate-300"
                       : "border-slate-400/30 bg-slate-200/70 text-slate-700"
@@ -111,12 +104,12 @@ export default function Plans() {
                 }
               `}
             >
-              {subscription?.plan === "Free" ? "Gratuito" : "Ativo"}
+              {subscription?.plan === "Plano Gratuito" ? "Gratuito" : "Ativo"}
             </span>
           </div>
         </div>
 
-        {subscription?.plan !== "Free" && (
+        {subscription?.plan !== "Plano Gratuito" && (
           <div
             className={`
               flex
@@ -161,7 +154,7 @@ export default function Plans() {
 
       <div className="mt-6 flex flex-col sm:flex-row gap-3">
         <ConfigButton onClick={() => navigate("/plans")}>
-          {subscription?.plan === "Free" ? "Fazer upgrade" : "Gerenciar plano"}
+          {subscription?.plan === "Plano Gratuito" ? "Fazer upgrade" : "Gerenciar plano"}
         </ConfigButton>
       </div>
     </ConfigCard>

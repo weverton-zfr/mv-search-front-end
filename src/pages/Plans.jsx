@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { useState } from "react";
 import ContainerDefault from "../components/ContainerDefault";
+import { planDate } from "../data/planDate"
 
 export default function Plans() {
   const { subscription } = useAuth();
@@ -14,42 +15,7 @@ export default function Plans() {
 
   const isDark = theme === "dark";
 
-  const plans = [
-    {
-      title: "Plano Basic Mensal",
-      price: "R$ 39,99",
-      id: "6a12868f7d9c8f18eb320995",
-      level: 1,
-      benefits: [
-        "✅ Ideal para começar",
-        "✅ Flexibilidade mensal",
-        "✅ Sem fidelidade"
-      ]
-    },
-    {
-      title: "Plano Basic Trimensal",
-      price: "R$ 99,99",
-      id: "6a1286af7d9c8f18eb320a9c",
-      level: 2,
-      benefits: [
-        "✅ Acesso a pesquisas avançadas",
-        "✅ Melhor custo-benefício",
-        "✅ Economia no médio prazo"
-      ]
-    },
-    {
-      title: "Plano Anual",
-      price: "R$ 199,99",
-      id: "6a1286bb7d9c8f18eb320b67",
-      level: 3,
-      benefits: [
-        "✅ Melhor preço",
-        "✅ Economia máxima",
-        "✅ Acesso contínuo"
-      ]
-    }
-  ];
-
+  const plans = planDate
   const currentPlan = plans.find((plan) => plan.title === subscription?.plan);
   const currentLevel = currentPlan?.level || 0;
 
@@ -129,7 +95,7 @@ export default function Plans() {
               ${isDark ? "text-green-300/70" : "text-slate-700"}
             `}
           >
-            Escolha o plano ideal para suas pesquisas.
+            Escolha o plano ideal para suas verificações.
           </p>
         </div>
 
@@ -140,24 +106,10 @@ export default function Plans() {
 
             const badge =
               plan.level === 1
-                ? "Flexível"
+                ? "Básico"
                 : plan.level === 2
-                  ? "Mais Popular"
-                  : "Melhor Oferta";
-
-            const description =
-              plan.level === 1
-                ? "Ideal para começar e testar a plataforma."
-                : plan.level === 2
-                  ? "O melhor equilíbrio entre custo e benefício."
-                  : "Máxima economia e acesso contínuo durante todo o ano.";
-
-            const monthlyEquivalent =
-              plan.level === 2
-                ? "Equivale a R$ 33,33/mês"
-                : plan.level === 3
-                  ? "Equivale a apenas R$ 16,66/mês"
-                  : null;
+                  ? "Avançado"
+                  : "Profissional";
 
             return (
               <div
@@ -248,24 +200,30 @@ export default function Plans() {
                   {plan.price}
                 </p>
 
-                {monthlyEquivalent && (
-                  <p
-                    className={`
-                      text-sm
-                      mt-1
-                      mb-3
-                      ${isDark ? "text-green-200/70" : "text-emerald-700"}
-                    `}
-                  >
-                    {monthlyEquivalent}
-                  </p>
-                )}
+                <p
+                  className={`
+                    text-sm
+                    mt-1
+                    mb-4
+                    ${
+                      isBlocked
+                        ? isDark
+                          ? "text-gray-500"
+                          : "text-slate-500"
+                        : isDark
+                          ? "text-green-200/70"
+                          : "text-emerald-700"
+                    }
+                  `}
+                >
+                  Duração: {plan.duration}
+                </p>
 
                 <p
                   className={`
                     text-sm
                     leading-relaxed
-                    mb-6
+                    mb-8
                     ${
                       isBlocked
                         ? isDark
@@ -277,30 +235,8 @@ export default function Plans() {
                     }
                   `}
                 >
-                  {description}
+                  {plan.benefits}
                 </p>
-
-                <ul
-                  className={`
-                    space-y-3
-                    mb-8
-                    text-sm
-                    sm:text-base
-                    ${
-                      isBlocked
-                        ? isDark
-                          ? "text-gray-500"
-                          : "text-slate-500"
-                        : isDark
-                          ? "text-green-100"
-                          : "text-slate-700"
-                    }
-                  `}
-                >
-                  {plan.benefits.map((benefit, i) => (
-                    <li key={i}>{benefit}</li>
-                  ))}
-                </ul>
 
                 <button
                   disabled={isBlocked}
@@ -326,7 +262,7 @@ export default function Plans() {
                     ? "Plano Atual"
                     : isBlocked
                       ? "Plano Indisponível"
-                      : `Assinar ${plan.title}`}
+                      : `Assinar Plano`}
                 </button>
               </div>
             );
@@ -371,9 +307,8 @@ export default function Plans() {
               ${isDark ? "text-green-100/80" : "text-slate-700"}
             `}
           >
-            Nossos planos foram criados para oferecer pesquisas rápidas,
-            resultados completos e suporte especializado para todas as suas
-            necessidades.
+            Nossos planos foram criados para oferecer verificações rápidas,
+            consultas eficientes e mais segurança para suas negociações.
           </p>
 
           <button

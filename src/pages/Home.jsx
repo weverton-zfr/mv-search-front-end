@@ -1,6 +1,7 @@
 import { searchItems } from "../data/searchItems";
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -12,10 +13,16 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const { subscription } = useAuth();
   const { theme } = useTheme();
+
   const isDark = theme === "dark";
   const navigation = useNavigate();
 
-  const data = searchItems.filter(item =>
+  const isFree =
+    !subscription ||
+    subscription?.plan === "Plano Gratuito" ||
+    subscription?.status !== "active";
+
+  const data = searchItems.filter((item) =>
     item.title
       .toLowerCase()
       .normalize("NFD")
@@ -27,6 +34,22 @@ export default function Home() {
           .replace(/[\u0300-\u036f]/g, "")
       )
   );
+
+  function handleCardClick(item) {
+    if (isFree) {
+      toast.error("Seu plano atual não permite realizar consultas.");
+      navigation("/plans");
+      return;
+    }
+
+    navigation("/search", {
+      state: {
+        type: item.type,
+        title: item.title,
+        inpType: item.inpType
+      }
+    });
+  }
 
   return (
     <ContainerDefault>
@@ -46,16 +69,19 @@ export default function Home() {
                 lg:text-5xl
                 font-black
                 ${isDark ? "text-green-100" : "text-emerald-950"}
-            `}>
+              `}
+            >
               MV SEARCH
             </h1>
 
-            <p className={`
+            <p
+              className={`
                 text-xs
                 sm:text-base
                 mt-1
                 ${isDark ? "text-gray-400" : "text-slate-600"}
-            `}>
+              `}
+            >
               Escolha o tipo de consulta desejado.
             </p>
           </div>
@@ -93,12 +119,14 @@ export default function Home() {
         <div className="w-full grid grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-5 mt-6 sm:mt-10">
           {data.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center text-center py-20">
-              <h2 className={`
+              <h2
+                className={`
                   text-2xl
                   sm:text-3xl
                   font-bold
                   ${isDark ? "text-green-900" : "text-emerald-900"}
-              `}>
+                `}
+              >
                 Nenhum resultado encontrado
               </h2>
 
@@ -107,27 +135,17 @@ export default function Home() {
               </p>
             </div>
           ) : (
-            data.map((itens, i) => {
-              const isFree = subscription?.plan === "Free";
-              return (
+            data.map((item) => (
               <HomeCard
-                onClick={() =>
-                  !isFree &&
-                  navigation("/search", {
-                    state: {
-                      type: itens.type,
-                      title: itens.title,
-                      inpType: itens.inpType
-                    }
-                  })}
-                itens={itens}
+                key={item.type}
+                onClick={() => handleCardClick(item)}
+                itens={item}
                 isFree={isFree}
               />
-              );
-            })
+            ))
           )}
         </div>
       </SubContainer>
     </ContainerDefault>
   );
-} 
+}

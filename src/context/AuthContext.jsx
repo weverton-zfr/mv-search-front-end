@@ -61,7 +61,7 @@ export function AuthProvider({ children }) {
 
     const { data: listener } =
       supabase.auth.onAuthStateChange(
-        (_event, session) => {
+        (_event, session) => { 
           loadUser(session)
         }
       )

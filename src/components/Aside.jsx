@@ -146,7 +146,7 @@ export default function Aside() {
             }
           `}
         >
-          Plano: {subscription?.plan}
+          {subscription?.plan}
         </span>
       </div>
 

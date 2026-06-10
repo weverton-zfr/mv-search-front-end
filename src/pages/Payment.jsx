@@ -30,10 +30,7 @@ export default function Payment() {
     const interval = setInterval(async () => {
       try {
         const response = await api.post(
-          `/payments/payment/${state.paymentId}/confirm`,
-          {
-            plan: state.productName
-          }
+          `/payments/payment/${state.paymentId}/confirm`
         );
 
         if (response.data.paid) {
@@ -59,6 +56,11 @@ export default function Payment() {
   }, [state, isCard, navigation, fetchProfile]);
 
   function copyPixCode() {
+    if (!state?.pix?.brCode) {
+      toast.error("Código PIX não encontrado.");
+      return;
+    }
+
     navigator.clipboard.writeText(state.pix.brCode);
 
     toast.success("Código PIX copiado!", {
@@ -91,7 +93,6 @@ export default function Payment() {
           md:p-8
           lg:p-10
           transition-all
-
           ${
             isDark
               ? "bg-black/70 border-green-900/50 shadow-[0_0_25px_#10b98122]"
@@ -105,7 +106,6 @@ export default function Payment() {
               text-3xl
               sm:text-4xl
               font-black
-
               ${isDark ? "text-green-200" : "text-emerald-900"}
             `}
           >
@@ -117,7 +117,6 @@ export default function Payment() {
               mt-3
               text-sm
               sm:text-base
-
               ${isDark ? "text-gray-400" : "text-slate-600"}
             `}
           >
@@ -145,7 +144,6 @@ export default function Payment() {
               flex-col
               items-center
               transition-all
-
               ${
                 isDark
                   ? "bg-black/40 border-white/10"
@@ -168,7 +166,6 @@ export default function Payment() {
                     justify-center
                     border
                     text-center
-
                     ${
                       isDark
                         ? "bg-blue-950/20 border-blue-400/20"
@@ -182,7 +179,6 @@ export default function Payment() {
                     className={`
                       text-xl
                       font-bold
-
                       ${isDark ? "text-blue-200" : "text-blue-900"}
                     `}
                   >
@@ -193,7 +189,6 @@ export default function Payment() {
                     className={`
                       mt-2
                       text-sm
-
                       ${isDark ? "text-blue-200/70" : "text-blue-800/70"}
                     `}
                   >
@@ -205,7 +200,6 @@ export default function Payment() {
                   className={`
                     mt-4
                     text-xs
-
                     ${isDark ? "text-gray-400" : "text-slate-500"}
                   `}
                 >
@@ -240,7 +234,6 @@ export default function Payment() {
                   className={`
                     mt-4
                     text-xs
-
                     ${isDark ? "text-gray-400" : "text-slate-500"}
                   `}
                 >
@@ -257,7 +250,6 @@ export default function Payment() {
                     className={`
                       text-sm
                       font-medium
-
                       ${isDark ? "text-emerald-400" : "text-emerald-800"}
                     `}
                   >
@@ -274,7 +266,6 @@ export default function Payment() {
                 rounded-3xl
                 border
                 p-5
-
                 ${
                   isDark
                     ? "bg-black/40 border-white/10"
@@ -285,7 +276,6 @@ export default function Payment() {
               <p
                 className={`
                   text-sm
-
                   ${isDark ? "text-gray-400" : "text-slate-600"}
                 `}
               >
@@ -297,7 +287,6 @@ export default function Payment() {
                   mt-1
                   text-2xl
                   font-bold
-
                   ${isDark ? "text-green-200" : "text-emerald-900"}
                 `}
               >
@@ -309,7 +298,6 @@ export default function Payment() {
                   mt-3
                   text-xl
                   font-semibold
-
                   ${isDark ? "text-white" : "text-slate-800"}
                 `}
               >
@@ -326,7 +314,6 @@ export default function Payment() {
                   rounded-3xl
                   border
                   p-5
-
                   ${
                     isDark
                       ? "bg-black/40 border-white/10"
@@ -338,7 +325,6 @@ export default function Payment() {
                   className={`
                     text-sm
                     mb-2
-
                     ${isDark ? "text-gray-400" : "text-slate-600"}
                   `}
                 >
@@ -350,7 +336,6 @@ export default function Payment() {
                     text-sm
                     leading-relaxed
                     mb-4
-
                     ${isDark ? "text-gray-300" : "text-slate-700"}
                   `}
                 >
@@ -382,7 +367,6 @@ export default function Payment() {
                   rounded-3xl
                   border
                   p-5
-
                   ${
                     isDark
                       ? "bg-black/40 border-white/10"
@@ -394,7 +378,6 @@ export default function Payment() {
                   className={`
                     text-sm
                     mb-2
-
                     ${isDark ? "text-gray-400" : "text-slate-600"}
                   `}
                 >
@@ -410,7 +393,6 @@ export default function Payment() {
                     p-4
                     text-sm
                     break-all
-
                     ${
                       isDark
                         ? "bg-black/50 border-white/5 text-gray-300"
@@ -449,7 +431,6 @@ export default function Payment() {
                 p-5
                 text-sm
                 leading-relaxed
-
                 ${
                   isDark
                     ? "bg-black/40 border-white/10 text-gray-400"
@@ -472,7 +453,6 @@ export default function Payment() {
                   font-semibold
                   transition
                   active:scale-[0.98]
-
                   ${
                     isDark
                       ? "bg-white/10 hover:bg-white/15 text-gray-300"

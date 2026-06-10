@@ -9,7 +9,8 @@ body,
 
 body {
     margin: 0;
-
+    background: radial-gradient(circle at top, #022c22, #000);
+    color: #fff;
     font-family:
         Inter,
         system-ui,

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router";
 import { IMaskInput } from "react-imask";
 
+import { api } from "../lib/api";
 import { useTheme } from "../context/ThemeContext";
 import ContainerDefault from "../components/ContainerDefault";
 import SearchResult from "../components/searchResult/SearchResult";
@@ -44,7 +44,6 @@ export default function Search() {
 
   const copyResults = () => {
     if (!result) return;
-
     copyToClipboard(getFlatText(result));
   };
 
@@ -57,122 +56,126 @@ export default function Search() {
     });
   };
 
-async function handleSearch() {
-  if (!search.trim()) return;
+  async function handleSearch() {
+    if (!search.trim()) return;
 
-  const minLengthByType = {
-    cpf: 11,
-    phone: 10,
-    cep: 8,
-    cnpj: 14,
-    cns: 15,
-    title: 12
-  };
-
-  const onlyNumbers = search.replace(/\D/g, "");
-  const minLength = minLengthByType[type];
-
-  if (minLength && onlyNumbers.length < minLength) {
-    setResult(null);
-    setError(`Digite todos os ${minLength} números para realizar esta consulta.`);
-    return;
-  }
-
-  try {
-    setLoading(true);
-    setError("");
-    setResult(null);
-
-    const textModulesToUppercase = [
-      "mother",
-      "father"
-    ];
-
-    const consulta = numericModules.includes(type)
-      ? onlyNumbers
-      : textModulesToUppercase.includes(type)
-        ? search.trim().toUpperCase()
-        : search.trim();
-
-    const params = {
-      token: import.meta.env.VITE_API_TOKEN,
-      modulo: type,
-      consulta
+    const minLengthByType = {
+      cpf: 11,
+      phone: 10,
+      cep: 8,
+      cnpj: 14,
+      cns: 15,
+      title: 12,
+      vizinhos: 11,
+      veiculos: 11,
+      proprietarios: 11
     };
 
-    if (type === "cpf") {
-      params.vacinas = vacinas ? "on" : "off";
-      params.foto = foto ? "on" : "off";
-      params.sus = sus ? "on" : "off";
-    }
+    const onlyNumbers = search.replace(/\D/g, "");
+    const minLength = minLengthByType[type];
 
-    const { data } = await axios.get(import.meta.env.VITE_API_URL, {
-      params,
-      validateStatus: () => true
-    });
-
-    console.log(data);
-
-    const emptyOwnerResult =
-      Array.isArray(data?.veiculo) &&
-      Array.isArray(data?.historico) &&
-      data.veiculo.length === 0 &&
-      data.historico.length === 0;
-
-    const apiError =
-      data?.status === 400 ||
-      data?.status === 401 ||
-      data?.status === 403 ||
-      data?.status === 500 ||
-      data?.code === 400 ||
-      data?.code === 401 ||
-      data?.code === 403 ||
-      data?.statusMsg === "Forbidden" ||
-      data?.message === "request validation failed";
-
-    const notFound =
-      !data ||
-      data?.status === 404 ||
-      data?.statusMsg === "Not found" ||
-      data?.statusMsg === "Nenhum possuidor localizado." ||
-      data?.reason === "Document not found." ||
-      data?.total === 0 ||
-      (Array.isArray(data?.msg) && data.msg.length === 0) ||
-      (Array.isArray(data?.data) && data.data.length === 0) ||
-      (Array.isArray(data?.vizinhos) && data.vizinhos.length === 0) ||
-      emptyOwnerResult;
-
-    if (apiError || notFound) {
+    if (minLength && onlyNumbers.length < minLength) {
       setResult(null);
-
-      if (data?.status === 403 || data?.statusMsg === "Forbidden") {
-        setError("Consulta inválida ou parâmetro ausente.");
-        return;
-      }
-
-      if (
-        data?.code === 400 ||
-        data?.status === 400 ||
-        data?.message === "request validation failed"
-      ) {
-        setError("Dados inválidos. Verifique a informação digitada.");
-        return;
-      }
-
-      setError("Nenhum resultado encontrado para esta consulta.");
+      setError(`Digite todos os ${minLength} números para realizar esta consulta.`);
       return;
     }
 
-    setResult(data);
-  } catch (err) {
-    console.error(err);
+    try {
+      setLoading(true);
+      setError("");
+      setResult(null);
 
-    setResult(null);
-    setError("Erro ao consultar API.");
-  } finally {
-    setLoading(false);
+      const textModulesToUppercase = ["mother", "father"];
+
+      const consulta = numericModules.includes(type)
+        ? onlyNumbers
+        : textModulesToUppercase.includes(type)
+          ? search.trim().toUpperCase()
+          : search.trim();
+
+      const params = {
+        modulo: type,
+        consulta
+      };
+
+      if (type === "cpf") {
+        params.vacinas = vacinas ? "on" : "off";
+        params.foto = foto ? "on" : "off";
+        params.sus = sus ? "on" : "off";
+      }
+
+      const { data } = await api.get("/search", {
+        params,
+        validateStatus: () => true
+      });
+
+      const emptyOwnerResult =
+        Array.isArray(data?.veiculo) &&
+        Array.isArray(data?.historico) &&
+        data.veiculo.length === 0 &&
+        data.historico.length === 0;
+
+      const apiError =
+        data?.status === 400 ||
+        data?.status === 401 ||
+        data?.status === 403 ||
+        data?.status === 500 ||
+        data?.code === 400 ||
+        data?.code === 401 ||
+        data?.code === 403 ||
+        data?.success === false ||
+        data?.statusMsg === "Forbidden" ||
+        data?.message === "request validation failed";
+
+      const notFound =
+        !data ||
+        data?.status === 404 ||
+        data?.statusMsg === "Not found" ||
+        data?.statusMsg === "Nenhum possuidor localizado." ||
+        data?.reason === "Document not found." ||
+        data?.total === 0 ||
+        (Array.isArray(data?.msg) && data.msg.length === 0) ||
+        (Array.isArray(data?.data) && data.data.length === 0) ||
+        (Array.isArray(data?.vizinhos) && data.vizinhos.length === 0) ||
+        emptyOwnerResult;
+
+      if (apiError || notFound) {
+        setResult(null);
+
+        if (data?.error) {
+          setError(data.error);
+          return;
+        }
+
+        if (data?.status === 403 || data?.statusMsg === "Forbidden") {
+          setError("Consulta inválida, parâmetro ausente ou plano sem permissão.");
+          return;
+        }
+
+        if (
+          data?.code === 400 ||
+          data?.status === 400 ||
+          data?.message === "request validation failed"
+        ) {
+          setError("Dados inválidos. Verifique a informação digitada.");
+          return;
+        }
+
+        setError("Nenhum resultado encontrado para esta consulta.");
+        return;
+      }
+
+      setResult(data);
+    } catch (err) {
+      console.error(err);
+
+      setResult(null);
+      setError("Erro ao consultar API.");
+    } finally {
+      setLoading(false);
+    }
   }
-}
+
   if (!type) {
     return (
       <section className="min-h-[100dvh] flex items-center justify-center px-4 py-6 transition-colors">
@@ -202,13 +205,7 @@ async function handleSearch() {
             Tipo de pesquisa inválido
           </h1>
 
-          <p
-            className={
-              isDark
-                ? "mt-3 text-gray-400"
-                : "mt-3 text-slate-600"
-            }
-          >
+          <p className={isDark ? "mt-3 text-gray-400" : "mt-3 text-slate-600"}>
             Volte para o início e selecione uma consulta.
           </p>
 
@@ -276,13 +273,7 @@ async function handleSearch() {
                 MV SEARCH
               </h1>
 
-              <p
-                className={
-                  isDark
-                    ? "text-sm text-gray-400"
-                    : "text-sm text-slate-600"
-                }
-              >
+              <p className={isDark ? "text-sm text-gray-400" : "text-sm text-slate-600"}>
                 Consulta por {title}
               </p>
             </div>
@@ -319,13 +310,7 @@ async function handleSearch() {
         >
           <div>
             <div className="flex items-center justify-between gap-3 mb-2">
-              <label
-                className={
-                  isDark
-                    ? "text-sm text-gray-400"
-                    : "text-sm text-slate-600"
-                }
-              >
+              <label className={isDark ? "text-sm text-gray-400" : "text-sm text-slate-600"}>
                 Digite sua pesquisa
               </label>
 
