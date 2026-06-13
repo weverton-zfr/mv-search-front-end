@@ -28,13 +28,13 @@ export const searchItems = [
     type: "mother",
     inpType: "text"
   },
-  {
-    icon: "father",
-    title: "Nome do Pai",
-    info: "Localize informações associadas ao nome do pai.",
-    type: "father",
-    inpType: "text"
-  },
+  // {
+  //   icon: "father",
+  //   title: "Nome do Pai",
+  //   info: "Localize informações associadas ao nome do pai.",
+  //   type: "father",
+  //   inpType: "text"
+  // },
   {
     icon: "email",
     title: "Consulta por Email",

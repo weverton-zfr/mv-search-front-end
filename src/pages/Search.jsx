@@ -126,35 +126,48 @@ export default function Search() {
         validateStatus: () => true
       });
 
-      const emptyOwnerResult =
-        Array.isArray(data?.veiculo) &&
-        Array.isArray(data?.historico) &&
-        data.veiculo.length === 0 &&
-        data.historico.length === 0;
+      const isEmptyArray = (value) => Array.isArray(value) && value.length === 0;
 
-      const apiError =
-        data?.status === 400 ||
-        data?.status === 401 ||
-        data?.status === 403 ||
-        data?.status === 500 ||
-        data?.code === 400 ||
-        data?.code === 401 ||
-        data?.code === 403 ||
-        data?.success === false ||
-        data?.statusMsg === "Forbidden" ||
-        data?.message === "request validation failed";
+const arrayResultModules = ["name", "mother", "father", "phone", "mail"];
 
-      const notFound =
-      !data ||
-      data?.status === 404 ||
-      data?.statusMsg === "Not found" ||
-      data?.statusMsg === "Nenhum possuidor localizado." ||
-      data?.reason === "Document not found." ||
-      data?.total === 0 ||
-      (Array.isArray(data?.msg) && data.msg.length === 0) ||
-      (Array.isArray(data?.data) && data.data.length === 0) ||
-      (type === "vizinhos" && Array.isArray(data?.vizinhos) && data.vizinhos.length === 0) ||
-      emptyOwnerResult;
+const hasClearError =
+  !data ||
+  data?.status === 404 ||
+  data?.statusMsg === "Not found" ||
+  data?.statusMsg === "Nenhum possuidor localizado." ||
+  data?.reason === "Document not found.";
+
+const hasApiError =
+  data?.status === 400 ||
+  data?.status === 401 ||
+  data?.status === 403 ||
+  data?.status === 500 ||
+  data?.code === 400 ||
+  data?.code === 401 ||
+  data?.code === 403 ||
+  data?.success === false ||
+  data?.statusMsg === "Forbidden" ||
+  data?.message === "request validation failed";
+
+const hasEmptyArrayResult =
+  arrayResultModules.includes(type) &&
+  (
+    data?.total === 0 ||
+    isEmptyArray(data?.msg)
+  );
+
+const hasEmptyOwnerResult =
+  type === "proprietarios" &&
+  Array.isArray(data?.veiculo) &&
+  Array.isArray(data?.historico) &&
+  data.veiculo.length === 0 &&
+  data.historico.length === 0;
+
+const apiError = hasApiError;
+const notFound =
+  hasClearError ||
+  hasEmptyArrayResult ||
+  hasEmptyOwnerResult;
 
 // console.log("DATA RECEBIDA:", data);
 
