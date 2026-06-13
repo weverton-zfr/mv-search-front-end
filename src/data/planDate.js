@@ -7,11 +7,19 @@ export const planDate = [
       level: 1,
       benefits: "Para quem vende/compra online ocasionalmente e quer ter mais segurança ao negociar, sabendo exatamente com quem está lidando."
     },
+    // {
+    //   title: "Plano Avançado de Verificação",
+    //   duration: "3 meses",
+    //   price: "R$ 99,99",
+    //   id: "6a273665ec33f20ebcf05de3",
+    //   level: 2,
+    //   benefits: "Para compradores e vendedores que precisam verificar e consultar clientes com mais frequência."
+    // },
     {
       title: "Plano Avançado de Verificação",
       duration: "3 meses",
       price: "R$ 99,99",
-      id: "6a273665ec33f20ebcf05de3",
+      id: "6a2cb6fb264bc057c981773d",
       level: 2,
       benefits: "Para compradores e vendedores que precisam verificar e consultar clientes com mais frequência."
     },
