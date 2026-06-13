@@ -145,18 +145,34 @@ export default function Search() {
         data?.message === "request validation failed";
 
       const notFound =
-        !data ||
-        data?.status === 404 ||
-        data?.statusMsg === "Not found" ||
-        data?.statusMsg === "Nenhum possuidor localizado." ||
-        data?.reason === "Document not found." ||
-        data?.total === 0 ||
-        (Array.isArray(data?.msg) && data.msg.length === 0) ||
-        (Array.isArray(data?.data) && data.data.length === 0) ||
-        (Array.isArray(data?.vizinhos) && data.vizinhos.length === 0) ||
-        emptyOwnerResult;
+      !data ||
+      data?.status === 404 ||
+      data?.statusMsg === "Not found" ||
+      data?.statusMsg === "Nenhum possuidor localizado." ||
+      data?.reason === "Document not found." ||
+      data?.total === 0 ||
+      (Array.isArray(data?.msg) && data.msg.length === 0) ||
+      (Array.isArray(data?.data) && data.data.length === 0) ||
+      (type === "vizinhos" && Array.isArray(data?.vizinhos) && data.vizinhos.length === 0) ||
+      emptyOwnerResult;
 
-      if (apiError || notFound) {
+// console.log("DATA RECEBIDA:", data);
+
+// console.log("DEBUG VALIDAÇÃO:", {
+//   apiError,
+//   notFound,
+//   status: data?.status,
+//   statusMsg: data?.statusMsg,
+//   reason: data?.reason,
+//   total: data?.total,
+//   success: data?.success,
+//   msgEmpty: Array.isArray(data?.msg) && data.msg.length === 0,
+//   dataEmpty: Array.isArray(data?.data) && data.data.length === 0,
+//   vizinhosEmpty: Array.isArray(data?.vizinhos) && data.vizinhos.length === 0,
+//   emptyOwnerResult
+// });
+
+if (apiError || notFound) {
         setResult(null);
 
         if (data?.error) {
