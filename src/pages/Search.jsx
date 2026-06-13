@@ -18,6 +18,10 @@ export default function Search() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [uf, setUf] = useState("");
+
   const [vacinas, setVacinas] = useState(false);
   const [foto, setFoto] = useState(false);
   const [sus, setSus] = useState(false);
@@ -99,9 +103,22 @@ export default function Search() {
       };
 
       if (type === "cpf") {
-        params.vacinas = vacinas ? "on" : "off";
-        params.foto = foto ? "on" : "off";
-        params.sus = sus ? "on" : "off";
+          params.vacinas = vacinas ? "on" : "off";
+          params.foto = foto ? "on" : "off";
+          params.sus = sus ? "on" : "off";
+        }
+        if (type === "name") {
+        if (dataNascimento) {
+          params.dataNascimento = dataNascimento;
+        }
+
+        if (cidade.trim()) {
+          params.cidade = cidade.trim().toUpperCase();
+        }
+
+        if (uf.trim()) {
+          params.uf = uf.trim().toUpperCase();
+        }
       }
 
       const { data } = await api.get("/search", {
@@ -376,6 +393,71 @@ export default function Search() {
                   }
                 `}
               />
+            )}
+
+            {type === "name" && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                <input
+                  type="date"
+                  value={dataNascimento}
+                  onChange={(e) => setDataNascimento(e.target.value)}
+                  className={`
+                    w-full
+                    p-3
+                    rounded-2xl
+                    border
+                    outline-none
+                    transition
+                    ${
+                      isDark
+                        ? "bg-black/70 text-white border-emerald-400/20 focus:ring-2 focus:ring-emerald-500"
+                        : "bg-white/80 text-slate-900 border-slate-300/60 focus:ring-2 focus:ring-emerald-600/40"
+                    }
+                  `}
+                />
+
+                <input
+                  type="text"
+                  value={cidade}
+                  onChange={(e) => setCidade(e.target.value)}
+                  placeholder="Cidade"
+                  className={`
+                    w-full
+                    p-3
+                    rounded-2xl
+                    border
+                    outline-none
+                    transition
+                    ${
+                      isDark
+                        ? "bg-black/70 text-white placeholder:text-gray-500 border-emerald-400/20 focus:ring-2 focus:ring-emerald-500"
+                        : "bg-white/80 text-slate-900 placeholder:text-slate-400 border-slate-300/60 focus:ring-2 focus:ring-emerald-600/40"
+                    }
+                  `}
+                />
+
+                <input
+                  type="text"
+                  value={uf}
+                  onChange={(e) => setUf(e.target.value.slice(0, 2))}
+                  placeholder="UF"
+                  maxLength={2}
+                  className={`
+                    w-full
+                    p-3
+                    rounded-2xl
+                    border
+                    outline-none
+                    uppercase
+                    transition
+                    ${
+                      isDark
+                        ? "bg-black/70 text-white placeholder:text-gray-500 border-emerald-400/20 focus:ring-2 focus:ring-emerald-500"
+                        : "bg-white/80 text-slate-900 placeholder:text-slate-400 border-slate-300/60 focus:ring-2 focus:ring-emerald-600/40"
+                    }
+                  `}
+                />
+              </div>
             )}
 
             {type === "cpf" && (
