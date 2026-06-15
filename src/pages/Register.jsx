@@ -1,139 +1,166 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { toast } from "react-hot-toast";
 
-import Input from '../components/FormInput';
+import Input from "../components/FormInput";
+import ContainerDefault from "../components/ContainerDefault";
 
-import { toast } from 'react-hot-toast';
+import { api } from "../lib/api";
+import { useTheme } from "../context/ThemeContext";
+import { translateSupabaseError } from "../utils/supabaseErrors";
 
-import { api } from '../lib/api';
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
-import { useTheme } from '../context/ThemeContext';
-import { translateSupabaseError } from '../utils/supabaseErrors';
-import ContainerDefault from '../components/ContainerDefault';
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function Register() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
 
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
   const { theme } = useTheme();
 
-  const isDark = theme === 'dark';
+  const isDark = theme === "dark";
 
-  const handleRegister = async (e) => {
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    };
+  }, [avatarPreview]);
+
+  function handleAvatarChange(e) {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      return toast.error("Selecione uma imagem válida.", {
+        id: "avatar_invalid"
+      });
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      return toast.error("A imagem deve ter no máximo 2MB.", {
+        id: "avatar_size"
+      });
+    }
+
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  }
+
+  function removeAvatar() {
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+
+    setAvatarFile(null);
+    setAvatarPreview("");
+  }
+
+  async function handleRegister(e) {
     e.preventDefault();
 
-    if (!name?.trim() || !email?.trim() || !password?.trim()) {
-      return toast.error('Preencha todos os campos!', {
-        id: 'register_null'
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      return toast.error("Preencha todos os campos!", {
+        id: "register_null"
       });
     }
 
     if (password.length < 6) {
-      return toast.error('A senha deve ter pelo menos 6 caracteres.', {
-        id: 'password_min'
+      return toast.error("A senha deve ter pelo menos 6 caracteres.", {
+        id: "password_min"
       });
     }
 
     if (password.length > 72) {
-      return toast.error('A senha não pode ter mais de 72 caracteres.', {
-        id: 'password_max'
+      return toast.error("A senha não pode ter mais de 72 caracteres.", {
+        id: "password_max"
       });
     }
 
     if (!termsAccepted) {
-      return toast.error('Você precisa aceitar os Termos de Uso e a Política de Privacidade.', {
-        id: 'terms_required'
+      return toast.error("Você precisa aceitar os Termos de Uso e a Política de Privacidade.", {
+        id: "terms_required"
       });
     }
 
     try {
       setLoading(true);
 
-      await api.post('/register', {
-        name,
-        email,
+      const avatarBase64 = avatarFile ? await fileToBase64(avatarFile) : null;
+
+      await api.post("/register", {
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
         password,
-        termsAccepted
+        termsAccepted,
+        avatarBase64,
+        avatarType: avatarFile?.type || null
       });
 
-      toast.success('Conta criada com sucesso! Verifique seu email.', {
-        id: 'register_success'
+      toast.success("Conta criada com sucesso! Verifique seu email.", {
+        id: "register_success"
       });
 
       setTimeout(() => {
-        navigate('/login', {
+        navigate("/login", {
           replace: true
         });
       }, 1800);
     } catch (error) {
-  console.log('ERRO COMPLETO:', error)
-  console.log('STATUS:', error.response?.status)
-  console.log('RESPOSTA DO BACKEND:', error.response?.data)
+      const message =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message;
 
-  const message =
-    error.response?.data?.error ||
-    error.response?.data?.message ||
-    error.message
-
-  toast.error(translateSupabaseError(message), {
-    id: 'register_error'
-  })
-}
-  };
+      toast.error(translateSupabaseError(message), {
+        id: "register_error"
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <ContainerDefault>
       <form
         onSubmit={handleRegister}
         className={`
-          relative
-          w-full
-          max-w-md
-          rounded-3xl
-          border
-          backdrop-blur-xl
-          p-5
-          sm:p-8
-          transition-all
-          duration-300
-
+          relative w-full max-w-md rounded-3xl border backdrop-blur-xl
+          p-5 sm:p-8 transition-all duration-300
           ${
             isDark
-              ? 'bg-[#111111de] border-green-900/50 shadow-2xl'
-              : 'bg-white/75 border-slate-300/50 shadow-[0_0_35px_rgba(15,23,42,0.08)]'
+              ? "bg-[#111111de] border-green-900/50 shadow-2xl"
+              : "bg-white/75 border-slate-300/50 shadow-[0_0_35px_rgba(15,23,42,0.08)]"
           }
         `}
       >
         <button
           type="button"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate("/login")}
           className={`
-            absolute
-            top-5
-            right-5
-            px-4
-            py-2
-            rounded-xl
-            border
-            text-sm
-            font-medium
-            transition-all
-            duration-200
-            hover:scale-[1.02]
-            active:scale-[0.98]
-
+            absolute top-5 right-5 px-4 py-2 rounded-xl border text-sm font-medium
+            transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]
             ${
               isDark
-                ? 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
-                : 'bg-white/70 border-slate-300/60 text-slate-700 hover:bg-white'
+                ? "bg-white/5 border-white/10 text-gray-300 hover:bg-white/10"
+                : "bg-white/70 border-slate-300/60 text-slate-700 hover:bg-white"
             }
           `}
         >
@@ -143,20 +170,8 @@ export default function Register() {
         <div className="flex items-center gap-3 mb-6 pr-20">
           <div
             className={`
-              w-12
-              h-12
-              rounded-xl
-              overflow-hidden
-              flex
-              items-center
-              justify-center
-              border
-
-              ${
-                isDark
-                  ? 'bg-black/30 border-white/5'
-                  : 'bg-white/80 border-slate-300/40'
-              }
+              w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center border
+              ${isDark ? "bg-black/30 border-white/5" : "bg-white/80 border-slate-300/40"}
             `}
           >
             <img
@@ -167,55 +182,74 @@ export default function Register() {
           </div>
 
           <div>
-            <h1
-              className={`
-                font-bold
-                text-lg
-
-                ${isDark ? 'text-white' : 'text-emerald-950'}
-              `}
-            >
+            <h1 className={`font-bold text-lg ${isDark ? "text-white" : "text-emerald-950"}`}>
               MV SEARCH
             </h1>
 
-            <p
-              className={`
-                text-xs
-                uppercase
-                tracking-[0.25em]
-
-                ${isDark ? 'text-green-400' : 'text-emerald-800'}
-              `}
-            >
-              Painel de Consultas
+            <p className={`text-xs uppercase tracking-[0.1em] ${isDark ? "text-green-400" : "text-emerald-800"}`}>
+              Painel Profissional de Buscas
             </p>
           </div>
         </div>
 
         <div className="mb-6">
-          <h2
-            className={`
-              text-2xl
-              sm:text-3xl
-              font-bold
-
-              ${isDark ? 'text-white' : 'text-slate-900'}
-            `}
-          >
+          <h2 className={`text-2xl sm:text-3xl font-bold ${isDark ? "text-white" : "text-slate-900"}`}>
             Criar conta
           </h2>
 
-          <p
-            className={`
-              mt-2
-              text-sm
-              leading-relaxed
-
-              ${isDark ? 'text-gray-400' : 'text-slate-600'}
-            `}
-          >
+          <p className={`mt-2 text-sm leading-relaxed ${isDark ? "text-gray-400" : "text-slate-600"}`}>
             Registre sua conta para acessar o sistema.
           </p>
+        </div>
+
+        <div className="mb-6 flex flex-col items-center gap-3">
+          <label className="cursor-pointer group">
+            <div
+              className={`
+                w-24 h-24 rounded-full overflow-hidden border flex items-center justify-center
+                transition-all duration-300 group-hover:scale-105
+                ${
+                  isDark
+                    ? "bg-black/40 border-white/10 text-gray-400"
+                    : "bg-slate-100 border-slate-300 text-slate-500"
+                }
+              `}
+            >
+              {avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt="Foto de perfil"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="px-3 text-center text-xs">
+                  Adicionar foto
+                </span>
+              )}
+            </div>
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              disabled={loading}
+              className="hidden"
+            />
+          </label>
+
+          {avatarPreview && (
+            <button
+              type="button"
+              onClick={removeAvatar}
+              disabled={loading}
+              className={`
+                text-xs font-medium transition
+                ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}
+              `}
+            >
+              Remover foto
+            </button>
+          )}
         </div>
 
         <div className="space-y-1">
@@ -250,37 +284,20 @@ export default function Register() {
             type="checkbox"
             checked={termsAccepted}
             onChange={(e) => setTermsAccepted(e.target.checked)}
-            className="
-              mt-1
-              h-4
-              w-4
-              cursor-pointer
-              accent-emerald-700
-            "
+            className="mt-1 h-4 w-4 cursor-pointer accent-emerald-700"
           />
 
           <label
             htmlFor="termsAccepted"
-            className={`
-              text-xs
-              sm:text-sm
-              leading-relaxed
-              select-none
-
-              ${isDark ? 'text-gray-400' : 'text-slate-600'}
-            `}
+            className={`text-xs sm:text-sm leading-relaxed select-none ${isDark ? "text-gray-400" : "text-slate-600"}`}
           >
-            Li e aceito os{' '}
+            Li e aceito os{" "}
             <button
               type="button"
               onClick={() => setShowTermsModal(true)}
               className={`
-                font-semibold
-                underline
-                underline-offset-2
-                transition
-
-                ${isDark ? 'text-green-400 hover:text-green-300' : 'text-emerald-800 hover:text-emerald-700'}
+                font-semibold underline underline-offset-2 transition
+                ${isDark ? "text-green-400 hover:text-green-300" : "text-emerald-800 hover:text-emerald-700"}
               `}
             >
               Termos de Uso e a Política de Privacidade
@@ -293,41 +310,27 @@ export default function Register() {
           type="submit"
           disabled={loading}
           className="
-            w-full
-            mt-6
-            py-3
-            rounded-2xl
-            bg-emerald-700
-            hover:bg-emerald-600
-            text-white
-            font-semibold
-            transition-all
-            duration-200
+            w-full mt-6 py-3 rounded-2xl bg-emerald-700 hover:bg-emerald-600
+            text-white font-semibold transition-all duration-200
             hover:shadow-[0_0_20px_rgba(4,120,87,0.35)]
-            hover:scale-[1.01]
-            active:scale-[0.99]
-            disabled:opacity-50
-            disabled:cursor-not-allowed
+            hover:scale-[1.01] active:scale-[0.99]
+            disabled:opacity-50 disabled:cursor-not-allowed
           "
         >
-          {loading ? 'Registrando...' : 'Registrar'}
+          {loading ? "Registrando..." : "Registrar"}
         </button>
 
         <div className="mt-6 text-center text-sm">
-          <span className={isDark ? 'text-gray-500' : 'text-slate-600'}>
+          <span className={isDark ? "text-gray-500" : "text-slate-600"}>
             Já possui uma conta?
           </span>
 
           <button
             type="button"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate("/login")}
             className={`
-              ml-2
-              font-medium
-              hover:underline
-              transition
-
-              ${isDark ? 'text-green-400 hover:text-green-300' : 'text-emerald-800 hover:text-emerald-700'}
+              ml-2 font-medium hover:underline transition
+              ${isDark ? "text-green-400 hover:text-green-300" : "text-emerald-800 hover:text-emerald-700"}
             `}
           >
             Entrar
@@ -336,39 +339,18 @@ export default function Register() {
       </form>
 
       {showTermsModal && (
-        <div
-          className="
-            fixed
-            inset-0
-            z-50
-            flex
-            items-center
-            justify-center
-            px-4
-            bg-black/60
-            backdrop-blur-sm
-          "
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="terms-title"
             className={`
-              w-full
-              max-w-lg
-              rounded-3xl
-              border
-              p-5
-              sm:p-6
-              shadow-2xl
-              max-h-[85dvh]
-              overflow-y-auto
-              transition-all
-
+              w-full max-w-lg rounded-3xl border p-5 sm:p-6 shadow-2xl
+              max-h-[85dvh] overflow-y-auto transition-all
               ${
                 isDark
-                  ? 'bg-[#111111] border-green-900/50 text-white'
-                  : 'bg-white border-slate-200 text-slate-900'
+                  ? "bg-[#111111] border-green-900/50 text-white"
+                  : "bg-white border-slate-200 text-slate-900"
               }
             `}
           >
@@ -376,24 +358,12 @@ export default function Register() {
               <div>
                 <h3
                   id="terms-title"
-                  className={`
-                    text-xl
-                    font-bold
-
-                    ${isDark ? 'text-white' : 'text-slate-900'}
-                  `}
+                  className={`text-xl font-bold ${isDark ? "text-white" : "text-slate-900"}`}
                 >
                   Termos de Uso e Política de Privacidade
                 </h3>
 
-                <p
-                  className={`
-                    mt-1
-                    text-sm
-
-                    ${isDark ? 'text-gray-400' : 'text-slate-600'}
-                  `}
-                >
+                <p className={`mt-1 text-sm ${isDark ? "text-gray-400" : "text-slate-600"}`}>
                   Leia com atenção antes de criar sua conta.
                 </p>
               </div>
@@ -402,17 +372,11 @@ export default function Register() {
                 type="button"
                 onClick={() => setShowTermsModal(false)}
                 className={`
-                  px-3
-                  py-1.5
-                  rounded-xl
-                  border
-                  text-sm
-                  transition
-
+                  px-3 py-1.5 rounded-xl border text-sm transition
                   ${
                     isDark
-                      ? 'border-white/10 text-gray-300 hover:bg-white/10'
-                      : 'border-slate-300 text-slate-700 hover:bg-slate-100'
+                      ? "border-white/10 text-gray-300 hover:bg-white/10"
+                      : "border-slate-300 text-slate-700 hover:bg-slate-100"
                   }
                 `}
               >
@@ -420,21 +384,11 @@ export default function Register() {
               </button>
             </div>
 
-            <div
-              className={`
-                mt-5
-                space-y-4
-                text-sm
-                leading-relaxed
-
-                ${isDark ? 'text-gray-300' : 'text-slate-700'}
-              `}
-            >
+            <div className={`mt-5 space-y-4 text-sm leading-relaxed ${isDark ? "text-gray-300" : "text-slate-700"}`}>
               <section>
-                <h4 className={`font-semibold ${isDark ? 'text-green-400' : 'text-emerald-800'}`}>
+                <h4 className={`font-semibold ${isDark ? "text-green-400" : "text-emerald-800"}`}>
                   1. Uso da plataforma
                 </h4>
-
                 <p className="mt-1">
                   Ao criar uma conta no MV SEARCH, você declara que utilizará a plataforma de forma responsável,
                   legal e em conformidade com a legislação aplicável, incluindo normas de proteção de dados.
@@ -442,22 +396,19 @@ export default function Register() {
               </section>
 
               <section>
-                <h4 className={`font-semibold ${isDark ? 'text-green-400' : 'text-emerald-800'}`}>
+                <h4 className={`font-semibold ${isDark ? "text-green-400" : "text-emerald-800"}`}>
                   2. Responsabilidade do usuário
                 </h4>
-
                 <p className="mt-1">
                   O usuário é responsável pelas informações fornecidas, pelas consultas realizadas e pelo uso dos
-                  dados obtidos dentro da plataforma. É proibido utilizar o sistema para fins ilegais, abusivos,
-                  discriminatórios ou não autorizados.
+                  dados obtidos dentro da plataforma.
                 </p>
               </section>
 
               <section>
-                <h4 className={`font-semibold ${isDark ? 'text-green-400' : 'text-emerald-800'}`}>
+                <h4 className={`font-semibold ${isDark ? "text-green-400" : "text-emerald-800"}`}>
                   3. Privacidade e proteção de dados
                 </h4>
-
                 <p className="mt-1">
                   Coletamos apenas os dados necessários para cadastro, autenticação, segurança, funcionamento do
                   sistema e melhoria da experiência do usuário.
@@ -465,22 +416,19 @@ export default function Register() {
               </section>
 
               <section>
-                <h4 className={`font-semibold ${isDark ? 'text-green-400' : 'text-emerald-800'}`}>
+                <h4 className={`font-semibold ${isDark ? "text-green-400" : "text-emerald-800"}`}>
                   4. Consultas e LGPD
                 </h4>
-
                 <p className="mt-1">
                   Ao utilizar recursos de consulta, você declara possuir base legal, autorização ou justificativa
-                  legítima para realizar a pesquisa, assumindo total responsabilidade pelo uso das informações
-                  acessadas.
+                  legítima para realizar a pesquisa.
                 </p>
               </section>
 
               <section>
-                <h4 className={`font-semibold ${isDark ? 'text-green-400' : 'text-emerald-800'}`}>
+                <h4 className={`font-semibold ${isDark ? "text-green-400" : "text-emerald-800"}`}>
                   5. Aceite
                 </h4>
-
                 <p className="mt-1">
                   Ao marcar a caixa de aceite e continuar o cadastro, você confirma que leu, compreendeu e concorda
                   com estes Termos de Uso e com a Política de Privacidade.
@@ -496,15 +444,8 @@ export default function Register() {
                   setShowTermsModal(false);
                 }}
                 className="
-                  w-full
-                  py-3
-                  rounded-2xl
-                  bg-emerald-700
-                  hover:bg-emerald-600
-                  text-white
-                  font-semibold
-                  transition-all
-                  duration-200
+                  w-full py-3 rounded-2xl bg-emerald-700 hover:bg-emerald-600
+                  text-white font-semibold transition-all duration-200
                   hover:shadow-[0_0_20px_rgba(4,120,87,0.35)]
                   active:scale-[0.99]
                 "
@@ -516,19 +457,11 @@ export default function Register() {
                 type="button"
                 onClick={() => setShowTermsModal(false)}
                 className={`
-                  w-full
-                  py-3
-                  rounded-2xl
-                  border
-                  font-semibold
-                  transition-all
-                  duration-200
-                  active:scale-[0.99]
-
+                  w-full py-3 rounded-2xl border font-semibold transition-all duration-200 active:scale-[0.99]
                   ${
                     isDark
-                      ? 'border-white/10 text-gray-300 hover:bg-white/10'
-                      : 'border-slate-300 text-slate-700 hover:bg-slate-100'
+                      ? "border-white/10 text-gray-300 hover:bg-white/10"
+                      : "border-slate-300 text-slate-700 hover:bg-slate-100"
                   }
                 `}
               >

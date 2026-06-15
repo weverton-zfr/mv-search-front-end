@@ -6,65 +6,101 @@ import ConfigInput from "../../components/ConfigInput";
 
 import { api } from "../../lib/api";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function Acount() {
-  const navigate = useNavigate();
-
   const { theme } = useTheme();
+  const { profile, fetchProfile } = useAuth();
 
   const isDark = theme === "dark";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function loadProfile() {
-      try {
-        const { data } = await api.get("/me");
+    setName(profile?.name || "");
+    setEmail(profile?.email || "");
+    setAvatarPreview(profile?.avatar_url || "");
+  }, [profile]);
 
-        setName(data.profile?.name || "");
-        setEmail(data.profile?.email || "");
-      } catch {
-        toast.error("Erro ao carregar perfil", {
-          id: "load_profile_error"
-        });
+  useEffect(() => {
+    return () => {
+      if (avatarPreview?.startsWith("blob:")) {
+        URL.revokeObjectURL(avatarPreview);
       }
+    };
+  }, [avatarPreview]);
+
+  function handleAvatarChange(e) {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      return toast.error("Selecione uma imagem válida.", {
+        id: "avatar_invalid"
+      });
     }
 
-    loadProfile();
-  }, []);
+    if (file.size > 2 * 1024 * 1024) {
+      return toast.error("A imagem deve ter no máximo 2MB.", {
+        id: "avatar_size"
+      });
+    }
+
+    if (avatarPreview?.startsWith("blob:")) {
+      URL.revokeObjectURL(avatarPreview);
+    }
+
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  }
 
   async function handleSave() {
     const trimmedName = name.trim();
     const trimmedEmail = email.trim().toLowerCase();
 
     if (!trimmedName || !trimmedEmail) {
-      toast.error("Preencha nome e email.", {
+      return toast.error("Preencha nome e email.", {
         id: "empty_profile_fields"
       });
-
-      return;
     }
 
     try {
       setLoading(true);
 
+      const avatarBase64 = avatarFile ? await fileToBase64(avatarFile) : null;
+
       await api.put("/profile", {
         name: trimmedName,
-        email: trimmedEmail
+        email: trimmedEmail,
+        avatarBase64,
+        avatarType: avatarFile?.type || null
       });
+
+      await fetchProfile();
 
       toast.success("Informações alteradas com sucesso!", {
         id: "alter_success",
         duration: 2000
       });
 
-      setTimeout(() => {
-        navigate(0);
-      }, 2000);
+      setAvatarFile(null);
     } catch (err) {
       toast.error(err.response?.data?.error || "Erro ao atualizar perfil", {
         id: "alter_error"
@@ -79,10 +115,7 @@ export default function Acount() {
       <div className="flex flex-col gap-1 mb-8">
         <h2
           className={`
-            text-2xl
-            sm:text-3xl
-            font-bold
-            transition-colors
+            text-2xl sm:text-3xl font-bold transition-colors
             ${isDark ? "text-white" : "text-emerald-950"}
           `}
         >
@@ -91,8 +124,7 @@ export default function Acount() {
 
         <p
           className={`
-            text-sm
-            transition-colors
+            text-sm transition-colors
             ${isDark ? "text-gray-400" : "text-slate-600"}
           `}
         >
@@ -102,12 +134,7 @@ export default function Acount() {
 
       <div
         className={`
-          rounded-3xl
-          border
-          p-5
-          sm:p-6
-          mb-6
-          transition-all
+          rounded-3xl border p-5 sm:p-6 mb-6 transition-all
           ${
             isDark
               ? "bg-white/[0.03] border-white/5"
@@ -118,9 +145,7 @@ export default function Acount() {
         <div className="flex flex-col gap-2">
           <h3
             className={`
-              text-lg
-              font-bold
-              transition-colors
+              text-lg font-bold transition-colors
               ${isDark ? "text-white" : "text-emerald-950"}
             `}
           >
@@ -129,25 +154,18 @@ export default function Acount() {
 
           <p
             className={`
-              text-sm
-              leading-relaxed
-              transition-colors
+              text-sm leading-relaxed transition-colors
               ${isDark ? "text-gray-400" : "text-slate-600"}
             `}
           >
-            Atualize seus dados pessoais. As alterações são salvas automaticamente
-            após confirmação.
+            Atualize seus dados pessoais, incluindo sua foto de perfil.
           </p>
         </div>
       </div>
 
       <div
         className={`
-          rounded-3xl
-          border
-          p-5
-          sm:p-6
-          transition-all
+          rounded-3xl border p-5 sm:p-6 transition-all
           ${
             isDark
               ? "bg-black/40 border-white/10"
@@ -155,6 +173,46 @@ export default function Acount() {
           }
         `}
       >
+        <div className="mb-6 flex flex-col items-center gap-3">
+          <label className="cursor-pointer group">
+            <div
+              className={`
+                w-24 h-24 rounded-full overflow-hidden border flex items-center justify-center
+                transition-all duration-300 group-hover:scale-105
+                ${
+                  isDark
+                    ? "bg-white/5 border-white/10 text-gray-400"
+                    : "bg-slate-100 border-slate-300 text-slate-500"
+                }
+              `}
+            >
+              {avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt="Foto de perfil"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="px-3 text-center text-xs">
+                  Adicionar foto
+                </span>
+              )}
+            </div>
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              disabled={loading}
+              className="hidden"
+            />
+          </label>
+
+          <p className={isDark ? "text-xs text-gray-500" : "text-xs text-slate-500"}>
+            Clique na imagem para alterar. Máximo 2MB.
+          </p>
+        </div>
+
         <div className="flex flex-col gap-2">
           <ConfigInput
             label="Nome"

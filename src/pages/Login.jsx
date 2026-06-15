@@ -147,11 +147,11 @@ export default function Login() {
               className={`
                 text-xs
                 uppercase
-                tracking-[0.25em]
+                tracking-[0.1em]
                 ${isDark ? "text-green-400" : "text-emerald-700"}
               `}
             >
-              Painel de Consultas
+              Painel Profissional de Buscas
             </p>
           </div>
         </div>
