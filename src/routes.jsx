@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import Home from "./pages/Home"
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import Landing from "./pages/Landing";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Register from "./pages/Register";
 import AppLayout from "./layouts/AppLayout";
@@ -12,41 +13,66 @@ import { Toaster } from "react-hot-toast";
 import Payment from "./pages/Payment";
 import Checkout from "./pages/Checkout";
 import ResetPassword from "./pages/ResetPassword";
+import { useAuth } from "./context/AuthContext";
+import Aside from "./components/Aside";
+
+function RootRoute() {
+  const { profile, loading } = useAuth();
+
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
+
+  if (!profile) {
+    return <Landing />;
+  }
+
+  return (
+    <>
+      <Aside />
+      <Home />
+    </>
+  );
+}
 
 export default function RoutesApp() {
   return (
-  <BrowserRouter>
-      <Toaster 
-        position="top-center" 
+    <BrowserRouter>
+      <Toaster
+        position="top-center"
         reverseOrder={false}
         toastOptions={{
-            style: {
-            background: '#022c22',
-            color: '#fff',
-            border: '1px solid #065f46'
-            }
-      }}/>
+          style: {
+            background: "#022c22",
+            color: "#fff",
+            border: "1px solid #065f46",
+          },
+        }}
+      />
+
       <Routes>
+        <Route path="/" element={<RootRoute />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        <Route element={ 
-          <ProtectedRoute> 
-            <AppLayout /> 
-          </ProtectedRoute>
-        }>
-          <Route path="/" element={<Home/>}/>
-
-          <Route path="/plans" element={<Plans/>}/>
-          <Route path="/plans/payment" element={<Payment/>}/>
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/plans" element={<Plans />} />
+          <Route path="/plans/payment" element={<Payment />} />
           <Route path="/plans/checkout" element={<Checkout />} />
-          <Route path="/settings" element={<Settings/>}/>
+          <Route path="/settings" element={<Settings />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/search" element={<Search/>}/>
+          <Route path="/search" element={<Search />} />
         </Route>
 
-        <Route path="/*" element={<NotFound/>}/>
+        <Route path="/*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
