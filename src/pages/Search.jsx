@@ -32,6 +32,37 @@ export default function Search() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
+  const [ufOpen, setUfOpen] = useState(false);
+  const ufOptions = [
+    { value: "AC", label: "Acre" },
+    { value: "AL", label: "Alagoas" },
+    { value: "AP", label: "Amapá" },
+    { value: "AM", label: "Amazonas" },
+    { value: "BA", label: "Bahia" },
+    { value: "CE", label: "Ceará" },
+    { value: "DF", label: "Distrito Federal" },
+    { value: "ES", label: "Espírito Santo" },
+    { value: "GO", label: "Goiás" },
+    { value: "MA", label: "Maranhão" },
+    { value: "MT", label: "Mato Grosso" },
+    { value: "MS", label: "Mato Grosso do Sul" },
+    { value: "MG", label: "Minas Gerais" },
+    { value: "PA", label: "Pará" },
+    { value: "PB", label: "Paraíba" },
+    { value: "PR", label: "Paraná" },
+    { value: "PE", label: "Pernambuco" },
+    { value: "PI", label: "Piauí" },
+    { value: "RJ", label: "Rio de Janeiro" },
+    { value: "RN", label: "Rio Grande do Norte" },
+    { value: "RS", label: "Rio Grande do Sul" },
+    { value: "RO", label: "Rondônia" },
+    { value: "RR", label: "Roraima" },
+    { value: "SC", label: "Santa Catarina" },
+    { value: "SP", label: "São Paulo" },
+    { value: "SE", label: "Sergipe" },
+    { value: "TO", label: "Tocantins" }
+  ];
+
   const { type, title, inpType } = location.state || {};
 
   const moduleType = String(type || "").toLowerCase().trim();
@@ -559,27 +590,144 @@ export default function Search() {
                   `}
                 />
 
-                <input
-                  type="text"
-                  value={uf}
-                  onChange={(e) => setUf(e.target.value.slice(0, 2).toUpperCase())}
-                  placeholder="UF"
-                  maxLength={2}
-                  className={`
-                    w-full
-                    p-3
-                    rounded-2xl
-                    border
-                    outline-none
-                    uppercase
-                    transition
-                    ${
-                      isDark
-                        ? "bg-black/70 text-white placeholder:text-gray-500 border-emerald-400/20 focus:ring-2 focus:ring-emerald-500"
-                        : "bg-white/80 text-slate-900 placeholder:text-slate-400 border-slate-300/60 focus:ring-2 focus:ring-emerald-600/40"
-                    }
-                  `}
-                />
+                <div className="relative w-full">
+                  <button
+                    type="button"
+                    onClick={() => setUfOpen((prev) => !prev)}
+                    className={`
+                      w-full
+                      p-3
+                      pr-11
+                      rounded-2xl
+                      border
+                      outline-none
+                      text-left
+                      cursor-pointer
+                      transition
+                      ${
+                        isDark
+                          ? "bg-black/70 text-white border-emerald-400/20 hover:bg-black/90 focus:ring-2 focus:ring-emerald-500"
+                          : "bg-white/80 text-slate-900 border-slate-300/60 hover:bg-white focus:ring-2 focus:ring-emerald-600/40"
+                      }
+                    `}
+                  >
+                    {uf ? (
+                      <span className="font-medium">
+                        {uf} - {ufOptions.find((item) => item.value === uf)?.label}
+                      </span>
+                    ) : (
+                      <span className={isDark ? "text-gray-500" : "text-slate-400"}>
+                        Selecione a UF
+                      </span>
+                    )}
+                  </button>
+
+                  <span
+                    className={`
+                      pointer-events-none
+                      absolute
+                      right-4
+                      top-1/2
+                      -translate-y-1/2
+                      text-sm
+                      transition
+                      ${ufOpen ? "rotate-180" : "rotate-0"}
+                      ${isDark ? "text-emerald-300" : "text-emerald-800"}
+                    `}
+                  >
+                    ▼
+                  </span>
+
+                  {ufOpen && (
+                    <div
+                      className={`
+                        absolute
+                        z-50
+                        mt-2
+                        w-full
+                        max-h-64
+                        overflow-y-auto
+                        rounded-2xl
+                        border
+                        p-2
+                        shadow-2xl
+                        backdrop-blur-xl
+                        ${
+                          isDark
+                            ? "bg-black/95 border-emerald-400/20 shadow-emerald-950/40"
+                            : "bg-white/95 border-slate-300/70 shadow-slate-300/40"
+                        }
+                      `}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUf("");
+                          setUfOpen(false);
+                        }}
+                        className={`
+                          w-full
+                          px-3
+                          py-2.5
+                          rounded-xl
+                          text-left
+                          text-sm
+                          transition
+                          ${
+                            isDark
+                              ? "text-gray-400 hover:bg-white/10 hover:text-white"
+                              : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                          }
+                        `}
+                      >
+                        Todos os estados
+                      </button>
+
+                      {ufOptions.map((item) => (
+                        <button
+                          key={item.value}
+                          type="button"
+                          onClick={() => {
+                            setUf(item.value);
+                            setUfOpen(false);
+                          }}
+                          className={`
+                            w-full
+                            flex
+                            items-center
+                            justify-between
+                            gap-3
+                            px-3
+                            py-2.5
+                            rounded-xl
+                            text-left
+                            text-sm
+                            transition
+                            ${
+                              uf === item.value
+                                ? isDark
+                                  ? "bg-emerald-500/15 text-emerald-300"
+                                  : "bg-emerald-700/10 text-emerald-800"
+                                : isDark
+                                  ? "text-gray-300 hover:bg-white/10 hover:text-white"
+                                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+                            }
+                          `}
+                        >
+                          <span>
+                            {item.value} - {item.label}
+                          </span>
+
+                          {uf === item.value && (
+                            <span className={isDark ? "text-emerald-300" : "text-emerald-700"}>
+                              ✓
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
