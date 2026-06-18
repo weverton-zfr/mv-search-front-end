@@ -152,82 +152,119 @@ export default function Search() {
         validateStatus: () => true
       });
 
-      console.log("PARAMS ENVIADOS:", params);
-      console.log("RESULTADO DA API:", data);
+      const isEmptyArray = (value) => Array.isArray(value) && value.length === 0;
 
-     const isEmptyArray = (value) => Array.isArray(value) && value.length === 0;
+      const isEmptyObject = (value) =>
+        value &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        Object.keys(value).length === 0;
 
-const hasClearError =
-  !data ||
-  data?.status === 404 ||
-  data?.statusMsg === "Not found" ||
-  data?.statusMsg === "Nenhum possuidor localizado." ||
-  data?.statusMsg === "Nenhum veículo localizado." ||
-  data?.statusMsg === "Nenhum veiculo localizado." ||
-  data?.reason === "Document not found.";
+      const hasZeroTotalEmptyMsg =
+        data?.status === 200 &&
+        Number(data?.total) === 0 &&
+        Array.isArray(data?.msg) &&
+        data.msg.length === 0;
 
-const hasApiError =
-  data?.status === 400 ||
-  data?.status === 401 ||
-  data?.status === 403 ||
-  data?.status === 500 ||
-  data?.code === 400 ||
-  data?.code === 401 ||
-  data?.code === 403 ||
-  data?.success === false ||
-  data?.statusMsg === "Forbidden" ||
-  data?.message === "request validation failed";
+      const hasClearError =
+        !data ||
+        isEmptyArray(data) ||
+        isEmptyObject(data) ||
+        data?.status === 404 ||
+        data?.statusMsg === "Not found" ||
+        data?.statusMsg === "Nenhum possuidor localizado." ||
+        data?.statusMsg === "Nenhum veículo localizado." ||
+        data?.statusMsg === "Nenhum veiculo localizado." ||
+        data?.statusMsg === "Nenhum resultado localizado." ||
+        data?.statusMsg === "Nenhum resultado encontrado." ||
+        data?.statusMsg === "CNS não localizado." ||
+        data?.statusMsg === "CNS nao localizado." ||
+        data?.reason === "Document not found.";
 
-const hasEmptyArrayResult =
-  ["name", "mother", "father", "phone", "mail"].includes(moduleType) &&
-  (
-    data?.total === 0 ||
-    isEmptyArray(data?.msg)
-  );
+      const hasApiError =
+        data?.status === 400 ||
+        data?.status === 401 ||
+        data?.status === 403 ||
+        data?.status === 500 ||
+        data?.code === 400 ||
+        data?.code === 401 ||
+        data?.code === 403 ||
+        data?.success === false ||
+        data?.statusMsg === "Forbidden" ||
+        data?.message === "request validation failed";
 
-const hasEmptyVehicleResult =
-  moduleType === "veiculos" &&
-  Array.isArray(data?.veiculos) &&
-  data.veiculos.length === 0;
+      const hasEmptyArrayResult =
+        ["name", "mother", "father", "phone", "mail", "cns"].includes(moduleType) &&
+        (
+          Number(data?.total) === 0 ||
+          isEmptyArray(data?.msg) ||
+          isEmptyArray(data?.data) ||
+          isEmptyArray(data?.result) ||
+          isEmptyArray(data?.results)
+        );
 
-const hasEmptyOwnerResult =
-  moduleType === "proprietarios" &&
-  Array.isArray(data?.veiculo) &&
-  Array.isArray(data?.historico) &&
-  data.veiculo.length === 0 &&
-  data.historico.length === 0;
+      const hasEmptyCnsResult =
+        moduleType === "cns" &&
+        data?.status === 200 &&
+        !data?.DadosBasicos &&
+        !data?.dados &&
+        !data?.nome &&
+        !data?.cpf &&
+        !data?.cpf_cnpj &&
+        !data?.cns &&
+        !data?.CNS &&
+        !data?.sus &&
+        !data?.SUS &&
+        !Array.isArray(data?.msg) &&
+        !Array.isArray(data?.data) &&
+        !Array.isArray(data?.result) &&
+        !Array.isArray(data?.results);
 
-const notFound =
-  hasClearError ||
-  hasEmptyArrayResult ||
-  hasEmptyVehicleResult ||
-  hasEmptyOwnerResult;
+      const hasEmptyVehicleResult =
+        moduleType === "veiculos" &&
+        Array.isArray(data?.veiculos) &&
+        data.veiculos.length === 0;
 
-if (hasApiError || notFound) {
-  setResult(null);
+      const hasEmptyOwnerResult =
+        moduleType === "proprietarios" &&
+        Array.isArray(data?.veiculo) &&
+        Array.isArray(data?.historico) &&
+        data.veiculo.length === 0 &&
+        data.historico.length === 0;
 
-  if (data?.error) {
-    setError(data.error);
-    return;
-  }
+      const notFound =
+        hasZeroTotalEmptyMsg ||
+        hasClearError ||
+        hasEmptyArrayResult ||
+        hasEmptyCnsResult ||
+        hasEmptyVehicleResult ||
+        hasEmptyOwnerResult;
 
-  if (data?.status === 403 || data?.statusMsg === "Forbidden") {
-    setError("Consulta inválida, parâmetro ausente ou plano sem permissão.");
-    return;
-  }
+      if (hasApiError || notFound) {
+        setResult(null);
 
-  if (
-    data?.code === 400 ||
-    data?.status === 400 ||
-    data?.message === "request validation failed"
-  ) {
-    setError("Dados inválidos. Verifique a informação digitada.");
-    return;
-  }
+        if (data?.error) {
+          setError(data.error);
+          return;
+        }
 
-  setError("Nenhum resultado encontrado para esta consulta.");
-  return;
-}
+        if (data?.status === 403 || data?.statusMsg === "Forbidden") {
+          setError("Consulta inválida, parâmetro ausente ou plano sem permissão.");
+          return;
+        }
+
+        if (
+          data?.code === 400 ||
+          data?.status === 400 ||
+          data?.message === "request validation failed"
+        ) {
+          setError("Dados inválidos. Verifique a informação digitada.");
+          return;
+        }
+
+        setError("Nenhum resultado encontrado para esta consulta.");
+        return;
+      }
 
       setResult(data);
     } catch (err) {
@@ -447,6 +484,38 @@ if (hasApiError || notFound) {
                   }
                 `}
               />
+            )}
+
+            {["name", "cpf"].includes(moduleType) && (
+              <div
+                className={`
+                  mt-4
+                  rounded-2xl
+                  border
+                  px-4
+                  py-3
+                  text-sm
+                  ${
+                    isDark
+                      ? "bg-emerald-500/10 border-emerald-400/20 text-emerald-300"
+                      : "bg-emerald-700/10 border-emerald-700/20 text-emerald-800"
+                  }
+                `}
+              >
+                {moduleType === "name" && (
+                  <p>
+                    Esta consulta possui filtros opcionais. Você pode pesquisar apenas pelo
+                    nome ou refinar usando data de nascimento, cidade e UF.
+                  </p>
+                )}
+
+                {moduleType === "cpf" && (
+                  <p>
+                    Esta consulta possui filtros opcionais. Você pode pesquisar apenas pelo
+                    CPF ou incluir vacinas, foto e dados do SUS.
+                  </p>
+                )}
+              </div>
             )}
 
             {moduleType === "name" && (
