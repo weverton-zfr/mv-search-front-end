@@ -18,6 +18,160 @@ export default function SearchResult({
 }) {
   if (!result) return null;
 
+  const isVehiclesByCpfResult =
+    type === "veiculos" ||
+    (result?.proprietario && Array.isArray(result?.veiculos));
+
+  const isOwnersByPlateResult =
+    type === "proprietarios" ||
+    (result?.veiculo && Array.isArray(result?.historico));
+
+  if (isVehiclesByCpfResult) {
+    const proprietario = result?.proprietario;
+    const veiculos = Array.isArray(result?.veiculos) ? result.veiculos : [];
+
+    return (
+      <div className="mt-8 space-y-6">
+        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5">
+          <h2 className="text-xl font-bold text-emerald-400 mb-4">
+            Proprietário
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-200">
+            <p>
+              <strong>Nome:</strong>{" "}
+              {proprietario?.nome || "Não informado"}
+            </p>
+
+            <p>
+              <strong>CPF/CNPJ:</strong>{" "}
+              {proprietario?.cpfCnpj || "Não informado"}
+            </p>
+
+            <p>
+              <strong>Data de nascimento:</strong>{" "}
+              {proprietario?.dataNascimento || "Não informado"}
+            </p>
+
+            <p>
+              <strong>Nome da mãe:</strong>{" "}
+              {proprietario?.nomeMae || "Não informado"}
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-emerald-500/20 bg-black/30 p-5">
+          <h2 className="text-xl font-bold text-emerald-400 mb-4">
+            Veículos encontrados ({veiculos.length})
+          </h2>
+
+          {veiculos.length === 0 ? (
+            <p className="text-gray-400">
+              Nenhum veículo encontrado.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {veiculos.map((veiculo, index) => (
+                <div
+                  key={`${veiculo?.placa || "veiculo"}-${index}`}
+                  className="rounded-2xl border border-white/10 bg-black/40 p-4 space-y-2"
+                >
+                  <p className="text-sm text-gray-200">
+                    <strong>Placa:</strong>{" "}
+                    {veiculo?.placa || "Não informado"}
+                  </p>
+
+                  <p className="text-sm text-gray-200">
+                    <strong>Renavam:</strong>{" "}
+                    {veiculo?.renavam || "Não informado"}
+                  </p>
+
+                  <p className="text-sm text-gray-200">
+                    <strong>Ano registro:</strong>{" "}
+                    {veiculo?.ano_registro || "Não informado"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (isOwnersByPlateResult) {
+    const veiculo = result?.veiculo;
+    const historico = Array.isArray(result?.historico) ? result.historico : [];
+
+    return (
+      <div className="mt-8 space-y-6">
+        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5">
+          <h2 className="text-xl font-bold text-emerald-400 mb-4">
+            Veículo
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-200">
+            <p>
+              <strong>Placa:</strong>{" "}
+              {veiculo?.placa || "Não informado"}
+            </p>
+
+            <p>
+              <strong>Renavam:</strong>{" "}
+              {veiculo?.renavam || "Não informado"}
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-emerald-500/20 bg-black/30 p-5">
+          <h2 className="text-xl font-bold text-emerald-400 mb-4">
+            Histórico de proprietários ({historico.length})
+          </h2>
+
+          {historico.length === 0 ? (
+            <p className="text-gray-400">
+              Nenhum proprietário encontrado.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {historico.map((proprietario, index) => (
+                <div
+                  key={`${proprietario?.cpfCnpj || "proprietario"}-${index}`}
+                  className="rounded-2xl border border-white/10 bg-black/40 p-4 space-y-2"
+                >
+                  <p className="text-sm text-gray-200">
+                    <strong>Nome:</strong>{" "}
+                    {proprietario?.nome || "Não informado"}
+                  </p>
+
+                  <p className="text-sm text-gray-200">
+                    <strong>CPF/CNPJ:</strong>{" "}
+                    {proprietario?.cpfCnpj || "Não informado"}
+                  </p>
+
+                  <p className="text-sm text-gray-200">
+                    <strong>Data de nascimento:</strong>{" "}
+                    {proprietario?.dataNascimento || "Não informado"}
+                  </p>
+
+                  <p className="text-sm text-gray-200">
+                    <strong>Nome da mãe:</strong>{" "}
+                    {proprietario?.nomeMae || "Não informado"}
+                  </p>
+
+                  <p className="text-sm text-gray-200">
+                    <strong>Ano registro:</strong>{" "}
+                    {proprietario?.ano_registro || "Não informado"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (type === "cnpj" || result?.company) {
     return (
       <div className="mt-8">
@@ -41,7 +195,10 @@ export default function SearchResult({
         const basic = person?.DadosBasicos || person;
 
         return (
-          <div key={basic?.cpf || basic?.cpf_cnpj || index} className="space-y-5">
+          <div
+            key={basic?.cpf || basic?.cpf_cnpj || index}
+            className="space-y-5"
+          >
             <BasicDataSection
               result={person}
               basic={basic}
@@ -68,13 +225,38 @@ export default function SearchResult({
 }
 
 function normalizePeople(result, type) {
-  if (Array.isArray(result?.data)) return result.data;
+  if (Array.isArray(result?.data)) {
+    return removeDuplicatePeople(result.data);
+  }
 
-  if (Array.isArray(result?.msg)) return result.msg;
+  if (Array.isArray(result?.msg)) {
+    return removeDuplicatePeople(result.msg);
+  }
 
   if (type === "vizinhos" && Array.isArray(result?.vizinhos)) {
-    return result.vizinhos;
+    return removeDuplicatePeople(result.vizinhos);
   }
 
   return [result];
+}
+
+function removeDuplicatePeople(people) {
+  const map = new Map();
+
+  people.forEach((person, index) => {
+    const basic = person?.DadosBasicos || person;
+
+    const key =
+      basic?.cpf ||
+      basic?.cpf_cnpj ||
+      basic?.cpfCnpj ||
+      basic?.documento ||
+      `${basic?.nome || "sem-nome"}-${index}`;
+
+    if (!map.has(key)) {
+      map.set(key, person);
+    }
+  });
+
+  return Array.from(map.values());
 }

@@ -34,6 +34,8 @@ export default function Search() {
 
   const { type, title, inpType } = location.state || {};
 
+  const moduleType = String(type || "").toLowerCase().trim();
+
   const numericModules = [
     "cpf",
     "phone",
@@ -42,9 +44,13 @@ export default function Search() {
     "cns",
     "title",
     "vizinhos",
-    "veiculos",
-    "proprietarios"
+    "veiculos"
   ];
+
+  const plateModules = ["proprietarios"];
+
+  const shouldUseMask =
+    searchMasks[moduleType] && !plateModules.includes(moduleType);
 
   const copyResults = () => {
     if (!result) return;
@@ -56,7 +62,7 @@ export default function Search() {
 
     downloadSearchPDF({
       result,
-      type
+      type: moduleType
     });
   };
 
@@ -72,15 +78,32 @@ export default function Search() {
       title: 12,
       vizinhos: 11,
       veiculos: 11,
-      proprietarios: 11
+      proprietarios: 7
     };
 
     const onlyNumbers = search.replace(/\D/g, "");
-    const minLength = minLengthByType[type];
+    const onlyPlate = search.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
 
-    if (minLength && onlyNumbers.length < minLength) {
+    const minLength = minLengthByType[moduleType];
+
+    const isNumericModule = numericModules.includes(moduleType);
+    const isPlateModule = plateModules.includes(moduleType);
+
+    const currentLength = isPlateModule
+      ? onlyPlate.length
+      : isNumericModule
+        ? onlyNumbers.length
+        : search.trim().length;
+
+    if (minLength && currentLength < minLength) {
       setResult(null);
-      setError(`Digite todos os ${minLength} números para realizar esta consulta.`);
+
+      if (isPlateModule) {
+        setError(`Digite uma placa válida com ${minLength} caracteres.`);
+      } else {
+        setError(`Digite todos os ${minLength} números para realizar esta consulta.`);
+      }
+
       return;
     }
 
@@ -91,23 +114,26 @@ export default function Search() {
 
       const textModulesToUppercase = ["mother", "father"];
 
-      const consulta = numericModules.includes(type)
+      const consulta = isNumericModule
         ? onlyNumbers
-        : textModulesToUppercase.includes(type)
-          ? search.trim().toUpperCase()
-          : search.trim();
+        : isPlateModule
+          ? onlyPlate
+          : textModulesToUppercase.includes(moduleType)
+            ? search.trim().toUpperCase()
+            : search.trim();
 
       const params = {
-        modulo: type,
+        modulo: moduleType,
         consulta
       };
 
-      if (type === "cpf") {
-          params.vacinas = vacinas ? "on" : "off";
-          params.foto = foto ? "on" : "off";
-          params.sus = sus ? "on" : "off";
-        }
-        if (type === "name") {
+      if (moduleType === "cpf") {
+        params.vacinas = vacinas ? "on" : "off";
+        params.foto = foto ? "on" : "off";
+        params.sus = sus ? "on" : "off";
+      }
+
+      if (moduleType === "name") {
         if (dataNascimento) {
           params.dataNascimento = dataNascimento;
         }
@@ -126,15 +152,18 @@ export default function Search() {
         validateStatus: () => true
       });
 
-      const isEmptyArray = (value) => Array.isArray(value) && value.length === 0;
+      console.log("PARAMS ENVIADOS:", params);
+      console.log("RESULTADO DA API:", data);
 
-const arrayResultModules = ["name", "mother", "father", "phone", "mail"];
+     const isEmptyArray = (value) => Array.isArray(value) && value.length === 0;
 
 const hasClearError =
   !data ||
   data?.status === 404 ||
   data?.statusMsg === "Not found" ||
   data?.statusMsg === "Nenhum possuidor localizado." ||
+  data?.statusMsg === "Nenhum veículo localizado." ||
+  data?.statusMsg === "Nenhum veiculo localizado." ||
   data?.reason === "Document not found.";
 
 const hasApiError =
@@ -150,66 +179,55 @@ const hasApiError =
   data?.message === "request validation failed";
 
 const hasEmptyArrayResult =
-  arrayResultModules.includes(type) &&
+  ["name", "mother", "father", "phone", "mail"].includes(moduleType) &&
   (
     data?.total === 0 ||
     isEmptyArray(data?.msg)
   );
 
+const hasEmptyVehicleResult =
+  moduleType === "veiculos" &&
+  Array.isArray(data?.veiculos) &&
+  data.veiculos.length === 0;
+
 const hasEmptyOwnerResult =
-  type === "proprietarios" &&
+  moduleType === "proprietarios" &&
   Array.isArray(data?.veiculo) &&
   Array.isArray(data?.historico) &&
   data.veiculo.length === 0 &&
   data.historico.length === 0;
 
-const apiError = hasApiError;
 const notFound =
   hasClearError ||
   hasEmptyArrayResult ||
+  hasEmptyVehicleResult ||
   hasEmptyOwnerResult;
 
-// console.log("DATA RECEBIDA:", data);
+if (hasApiError || notFound) {
+  setResult(null);
 
-// console.log("DEBUG VALIDAÇÃO:", {
-//   apiError,
-//   notFound,
-//   status: data?.status,
-//   statusMsg: data?.statusMsg,
-//   reason: data?.reason,
-//   total: data?.total,
-//   success: data?.success,
-//   msgEmpty: Array.isArray(data?.msg) && data.msg.length === 0,
-//   dataEmpty: Array.isArray(data?.data) && data.data.length === 0,
-//   vizinhosEmpty: Array.isArray(data?.vizinhos) && data.vizinhos.length === 0,
-//   emptyOwnerResult
-// });
+  if (data?.error) {
+    setError(data.error);
+    return;
+  }
 
-if (apiError || notFound) {
-        setResult(null);
+  if (data?.status === 403 || data?.statusMsg === "Forbidden") {
+    setError("Consulta inválida, parâmetro ausente ou plano sem permissão.");
+    return;
+  }
 
-        if (data?.error) {
-          setError(data.error);
-          return;
-        }
+  if (
+    data?.code === 400 ||
+    data?.status === 400 ||
+    data?.message === "request validation failed"
+  ) {
+    setError("Dados inválidos. Verifique a informação digitada.");
+    return;
+  }
 
-        if (data?.status === 403 || data?.statusMsg === "Forbidden") {
-          setError("Consulta inválida, parâmetro ausente ou plano sem permissão.");
-          return;
-        }
-
-        if (
-          data?.code === 400 ||
-          data?.status === 400 ||
-          data?.message === "request validation failed"
-        ) {
-          setError("Dados inválidos. Verifique a informação digitada.");
-          return;
-        }
-
-        setError("Nenhum resultado encontrado para esta consulta.");
-        return;
-      }
+  setError("Nenhum resultado encontrado para esta consulta.");
+  return;
+}
 
       setResult(data);
     } catch (err) {
@@ -222,7 +240,7 @@ if (apiError || notFound) {
     }
   }
 
-  if (!type) {
+  if (!moduleType) {
     return (
       <section className="min-h-[100dvh] flex items-center justify-center px-4 py-6 transition-colors">
         <div
@@ -376,13 +394,13 @@ if (apiError || notFound) {
                   }
                 `}
               >
-                {type}
+                {moduleType}
               </span>
             </div>
 
-            {searchMasks[type] ? (
+            {shouldUseMask ? (
               <IMaskInput
-                mask={searchMasks[type]}
+                mask={searchMasks[moduleType]}
                 value={search}
                 onAccept={(value) => setSearch(value)}
                 placeholder={`Digite ${title}...`}
@@ -403,10 +421,17 @@ if (apiError || notFound) {
               />
             ) : (
               <input
-                type={inpType || "text"}
+                type={plateModules.includes(moduleType) ? "text" : inpType || "text"}
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  const value = plateModules.includes(moduleType)
+                    ? e.target.value.toUpperCase()
+                    : e.target.value;
+
+                  setSearch(value);
+                }}
                 placeholder={`Digite ${title}...`}
+                maxLength={plateModules.includes(moduleType) ? 7 : undefined}
                 className={`
                   w-full
                   p-3
@@ -424,7 +449,7 @@ if (apiError || notFound) {
               />
             )}
 
-            {type === "name" && (
+            {moduleType === "name" && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
                 <input
                   type="date"
@@ -468,7 +493,7 @@ if (apiError || notFound) {
                 <input
                   type="text"
                   value={uf}
-                  onChange={(e) => setUf(e.target.value.slice(0, 2))}
+                  onChange={(e) => setUf(e.target.value.slice(0, 2).toUpperCase())}
                   placeholder="UF"
                   maxLength={2}
                   className={`
@@ -489,7 +514,7 @@ if (apiError || notFound) {
               </div>
             )}
 
-            {type === "cpf" && (
+            {moduleType === "cpf" && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
                 {[
                   ["vacinas", vacinas, setVacinas],
@@ -615,7 +640,7 @@ if (apiError || notFound) {
 
         <SearchResult
           result={result}
-          type={type}
+          type={moduleType}
           foto={foto}
           vacinas={vacinas}
           sus={sus}

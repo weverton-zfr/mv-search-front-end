@@ -80,15 +80,15 @@ export const searchItems = [
   {
     icon: "car",
     title: "Veículos por CPF",
-    info: "Consulte veículos vinculados a um CPF de forma rápida e segura.",
+    info: "Consulte veículos pelo CPF de forma rápida e segura.",
     type: "veiculos",
     inpType: "number"
   },
   {
     icon: "car",
-    title: "Proprietários por CPF",
-    info: "Localize possíveis proprietários e veículos associados a um CPF.",
+    title: "Proprietários por PLACA",
+    info: "Localize possíveis proprietários e veículos pela placa.",
     type: "proprietarios",
-    inpType: "number"
+    inpType: "text"
   }
 ];
